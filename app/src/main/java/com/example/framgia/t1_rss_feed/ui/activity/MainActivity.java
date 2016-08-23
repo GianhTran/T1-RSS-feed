@@ -1,9 +1,11 @@
-package com.example.framgia.t1_rss_feed;
+package com.example.framgia.t1_rss_feed.ui.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity {
+import com.example.framgia.t1_rss_feed.BaseActivity;
+import com.example.framgia.t1_rss_feed.R;
+
+public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
