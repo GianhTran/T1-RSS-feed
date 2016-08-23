@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.example.framgia.t1_rss_feed.BaseFragment;
 import com.example.framgia.t1_rss_feed.R;
+import com.example.framgia.t1_rss_feed.ui.adapter.HomeAdapter;
 
 /**
  * Copyright @ 2016 Framgia inc
@@ -20,6 +21,7 @@ public class HomeFragment extends BaseFragment {
 
     private SwipeRefreshLayout mSwipeRefreshHome;
     private RecyclerView mRecyclerViewHome;
+    private HomeAdapter mHomeAdapter;
 
     public static HomeFragment newInstant() {
         HomeFragment homeFragment = new HomeFragment();
