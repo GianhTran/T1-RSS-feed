@@ -12,9 +12,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.framgia.t1_rss_feed.BaseFragment;
+import com.example.framgia.t1_rss_feed.Constants;
 import com.example.framgia.t1_rss_feed.R;
-import com.example.framgia.t1_rss_feed.data.models.New;
-import com.example.framgia.t1_rss_feed.others.EndlessRecyclerViewScrollListener;
+import com.example.framgia.t1_rss_feed.data.models.News;
+import com.example.framgia.t1_rss_feed.helper.EndlessRecyclerViewScrollListener;
 import com.example.framgia.t1_rss_feed.ui.adapter.HomeAdapter;
 
 import java.util.ArrayList;
@@ -24,13 +25,13 @@ import java.util.List;
  * Copyright @ 2016 Framgia inc
  * Created by GianhTNS on 23/08/2016.
  */
-public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNewClickListener {
+public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNewsClickListener {
 
     private SwipeRefreshLayout mSwipeRefreshHome;
     private RecyclerView mRecyclerViewHome;
     private HomeAdapter mHomeAdapter;
 
-    public static HomeFragment newInstant() {
+    public static HomeFragment newInstance() {
         HomeFragment homeFragment = new HomeFragment();
         return homeFragment;
     }
@@ -51,8 +52,8 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNewC
     }
 
     private void initView(View view) {
-        mSwipeRefreshHome = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshHome);
-        mRecyclerViewHome = (RecyclerView) view.findViewById(R.id.recyclerViewHome);
+        mSwipeRefreshHome = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_home);
+        mRecyclerViewHome = (RecyclerView) view.findViewById(R.id.recycler_home);
     }
 
     private void initSwipeToRefresh() {
@@ -70,11 +71,11 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNewC
      */
     private void reloadData() {
         mHomeAdapter.clearData();
-        mHomeAdapter.addData(DummyData());
+        mHomeAdapter.addData(dummyData());
     }
 
     private void initRecyclerView() {
-        mHomeAdapter = new HomeAdapter(DummyData(), getActivity(), this);
+        mHomeAdapter = new HomeAdapter(getActivity(), dummyData(), this);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerViewHome.setLayoutManager(layoutManager);
         mRecyclerViewHome.setAdapter(mHomeAdapter);
@@ -86,9 +87,9 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNewC
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mHomeAdapter.addData(DummyData());
+                        mHomeAdapter.addData(dummyData());
                     }
-                }, 5000);
+                }, Constants.DEFAULT_DELAY);
             }
         });
     }
@@ -96,11 +97,11 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNewC
     /**
      * create dummy data, return list of news
      */
-    private List<New> DummyData() {
+    private List<News> dummyData() {
         // dummy data
-        List<New> dummyData = new ArrayList<>();
+        List<News> dummyData = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
-            dummyData.add(new New().newIntanst());
+            dummyData.add(new News().newInstance());
         }
         return dummyData;
     }
@@ -118,7 +119,7 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNewC
     }
 
     @Override
-    public void temClick(String id) {
+    public void onItemNewsClick(String id) {
         Toast.makeText(getActivity(), id, Toast.LENGTH_SHORT).show();
 
     }

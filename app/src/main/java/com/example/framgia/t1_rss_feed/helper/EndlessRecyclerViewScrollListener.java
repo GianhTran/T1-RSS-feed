@@ -1,4 +1,4 @@
-package com.example.framgia.t1_rss_feed.others;
+package com.example.framgia.t1_rss_feed.helper;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;

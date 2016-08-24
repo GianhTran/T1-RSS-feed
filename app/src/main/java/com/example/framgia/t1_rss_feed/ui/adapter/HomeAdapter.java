@@ -9,7 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.framgia.t1_rss_feed.R;
-import com.example.framgia.t1_rss_feed.data.models.New;
+import com.example.framgia.t1_rss_feed.data.models.News;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +24,12 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int VIEW_TYPE_LOAD_MORE = 2;
     private final int VIEW_TYPE_TRASH = 3;
 
-    public OnItemNewClickListener mOnItemNewClickListener;
+    public OnItemNewsClickListener mOnItemNewClickListener;
 
-    private List<New> mNews = new ArrayList<>();
+    private List<News> mNews = new ArrayList<>();
     private Context mContext;
 
-    public HomeAdapter(List<New> news, Context context, OnItemNewClickListener listener) {
+    public HomeAdapter(Context context, List<News> news, OnItemNewsClickListener listener) {
         this.mNews = news;
         this.mContext = context;
         this.mOnItemNewClickListener = listener;
@@ -65,22 +65,46 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_ITEM:
                 ((ItemHolder) holder).injectData(mNews.get(position));
+                break;
+            default:
+                break;
         }
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == getItemCount() - 2)
+        if (position == (getItemCount() - 2)) {
             return VIEW_TYPE_LOAD_MORE;
-        else if (position == getItemCount() - 1)
+        } else if (position == (getItemCount() - 1)) {
             return VIEW_TYPE_TRASH;
-        else
+        } else {
             return VIEW_TYPE_ITEM;
+        }
     }
 
     @Override
     public int getItemCount() {
         return mNews.size() + 2; // 1 item for load more and 1 for trash
+    }
+
+    /**
+     * method add data into list
+     */
+    public void addData(List<News> data) {
+        mNews.addAll(data);
+        notifyItemRangeInserted(getItemCount() - 2, data.size());
+    }
+
+    public void clearData() {
+        mNews.clear();
+        notifyItemRangeRemoved(0, getItemCount() - 2);
+    }
+
+    /**
+     * handler item click listener
+     */
+    public interface OnItemNewsClickListener {
+        void onItemNewsClick(String id);
     }
 
     /**
@@ -93,12 +117,12 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         public ItemHolder(View view) {
             super(view);
-            mTvContent = (TextView) view.findViewById(R.id.tvContent);
-            mTvTime = (TextView) view.findViewById(R.id.tvTime);
-            mTvTitle = (TextView) view.findViewById(R.id.tvTitle);
+            mTvContent = (TextView) view.findViewById(R.id.text_content);
+            mTvTime = (TextView) view.findViewById(R.id.text_time);
+            mTvTitle = (TextView) view.findViewById(R.id.text_title);
         }
 
-        public void injectData(final New item) {
+        public void injectData(final News item) {
             mTvContent.setText(item.getItem().getContent());
             mTvTime.setText(item.getItem().getPubDate());
             mTvTitle.setText(item.getItem().getTitle());
@@ -106,7 +130,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mOnItemNewClickListener.temClick(item.getId());
+                    mOnItemNewClickListener.onItemNewsClick(item.getId());
                 }
             });
         }
@@ -120,7 +144,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         public LoadMoreHolder(View view) {
             super(view);
-            mProgressBarHome = (ProgressBar) view.findViewById(R.id.progressBarHome);
+            mProgressBarHome = (ProgressBar) view.findViewById(R.id.progressbar_home);
         }
     }
 
@@ -131,25 +155,5 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public TrashHolder(View view) {
             super(view);
         }
-    }
-
-    /**
-     * method add data into list
-     */
-    public void addData(List<New> data) {
-        mNews.addAll(data);
-        notifyItemRangeInserted(getItemCount() - 2, data.size());
-    }
-
-    public void clearData() {
-        mNews.clear();
-        notifyItemRangeRemoved(0, getItemCount() - 2);
-    }
-
-    /**
-     * handler item click listener
-     */
-    public interface OnItemNewClickListener {
-        void temClick(String id);
     }
 }

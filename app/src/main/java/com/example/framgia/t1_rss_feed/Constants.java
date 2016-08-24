@@ -6,4 +6,5 @@ package com.example.framgia.t1_rss_feed;
  */
 public class Constants {
     public static final String TAG = "gianhTran";
+    public static final int DEFAULT_DELAY = 2000;
 }

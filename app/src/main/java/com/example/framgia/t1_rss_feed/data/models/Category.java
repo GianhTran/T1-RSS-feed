@@ -5,27 +5,27 @@ package com.example.framgia.t1_rss_feed.data.models;
  * Created by GianhTNS on 23/08/2016.
  */
 public class Category {
-    private String id;
-    private String name;
+    private String mId;
+    private String mName;
 
     public Category(String id, String name) {
-        this.id = id;
-        this.name = name;
+        this.mId = id;
+        this.mName = name;
     }
 
     public String getId() {
-        return id;
+        return mId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setId(String mId) {
+        this.mId = mId;
     }
 
     public String getName() {
-        return name;
+        return mName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String mName) {
+        this.mName = mName;
     }
 }
