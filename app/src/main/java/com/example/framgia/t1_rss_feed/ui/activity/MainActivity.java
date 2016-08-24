@@ -23,7 +23,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initToolbar();
-        changeFragment(R.id.rlContainer, HomeFragment.newInstance(), "");
+        changeFragment(R.id.frame_container, HomeFragment.newInstance(), "");
     }
 
     @Override
@@ -46,7 +46,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initToolbar() {
-        mToolbarHome = (Toolbar) findViewById(R.id.toolbarHome);
+        mToolbarHome = (Toolbar) findViewById(R.id.toolbar_home);
         setSupportActionBar(mToolbarHome);
         mToolbarHome.setLogo(R.drawable.ic_logo);
     }

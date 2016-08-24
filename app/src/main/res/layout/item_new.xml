@@ -9,7 +9,7 @@
     android:padding="@dimen/dimen_tiny">
 
     <TextView
-        android:id="@+id/tvTitle"
+        android:id="@+id/text_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxLines="2"
@@ -18,7 +18,7 @@
         tool:text="title" />
 
     <TextView
-        android:id="@+id/tvTime"
+        android:id="@+id/text_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dimen_small"
@@ -28,7 +28,7 @@
         tool:text="20/10/2012" />
 
     <TextView
-        android:id="@+id/tvContent"
+        android:id="@+id/text_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dimen_medium"
