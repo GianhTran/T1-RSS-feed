@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">T1-RSS-feed</string>
+    <string name="app_title">news online</string>
+    <string name="menu_history">history</string>
 </resources>

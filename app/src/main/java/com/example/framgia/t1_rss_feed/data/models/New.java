@@ -16,6 +16,9 @@ public class New {
         this.item = item;
     }
 
+    public New() {
+    }
+
     // dummy data
     public New newIntanst() {
         return new New("", new Feed().newInstant(), new Item().newInstant());
