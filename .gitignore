@@ -1,5 +1,5 @@
 *.iml
 .gradle
 /local.properties
-.idea/.name
+.idea/
 /build
