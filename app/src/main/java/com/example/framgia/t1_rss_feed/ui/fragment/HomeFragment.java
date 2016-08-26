@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +55,7 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNews
     private void initView(View view) {
         mSwipeRefreshHome = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_home);
         mRecyclerViewHome = (RecyclerView) view.findViewById(R.id.recycler_home);
+
     }
 
     private void initSwipeToRefresh() {
@@ -120,7 +122,6 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNews
 
     @Override
     public void onItemNewsClick(String id) {
-        Toast.makeText(getActivity(), id, Toast.LENGTH_SHORT).show();
-
+        replaceFragment(R.id.frame_container, DetailFragment.newInstance());
     }
 }

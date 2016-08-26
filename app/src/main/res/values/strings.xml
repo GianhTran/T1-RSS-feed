@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">T1-RSS-feed</string>
+    <string name="font_material_icon">fonts/Material-Design-Iconic-Font.ttf</string>
+    <!-- Font Icon Code -->
+    <string name="ic_view">&#xf27d;</string>
+    <string name="msg_see_more_at_link">see more at : <u>[link]</u></string>
     <string name="app_title">news online</string>
     <string name="menu_history">history</string>
 </resources>

@@ -20,4 +20,7 @@
     <dimen name="text_size_super">28sp</dimen>
     <dimen name="text_size_under_super">24sp</dimen>
     <dimen name="text_size_over_small">13sp</dimen>
+
+    <!-- App dimension -->
+    <dimen name="font_icon_size">18sp</dimen>
 </resources>

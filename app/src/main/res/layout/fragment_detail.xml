@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/dimen_tiny">
+
+        <ImageView
+            android:id="@+id/image_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name"
+            android:scaleType="centerInside" />
+
+        <TextView
+            android:id="@+id/text_title_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_small"
+            android:gravity="start"
+            android:textSize="@dimen/text_size_large"
+            tools:text="title" />
+
+        <TextView
+            android:id="@+id/text_time_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:textSize="@dimen/text_size_small"
+            android:textStyle="italic"
+            tools:text="20/10/2016" />
+
+        <TextView
+            android:id="@+id/text_content_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_medium"
+            android:textSize="@dimen/text_size_medium"
+            tools:text="ajshdjs\ndahfjsdhafjds\nahfjasdhfjdfsdfds" />
+
+        <TextView
+            android:id="@+id/text_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/msg_see_more_at_link"
+            android:textSize="@dimen/text_size_small" />
+
+        <TextView
+            android:id="@+id/text_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_small"
+            android:gravity="end"
+            tools:text="GianhTran" />
+
+        <com.example.framgia.t1_rss_feed.ui.view.FontIcon
+            android:id="@+id/font_viewed"
+            style="@style/FontIconStyle"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/dimen_small"
+            android:text="@string/ic_view" />
+    </LinearLayout>
+
+</ScrollView>
