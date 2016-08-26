@@ -1,29 +1,21 @@
 package com.example.framgia.t1_rss_feed.data.models;
 
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
+
 /**
  * Copyright @ 2016 Framgia inc
  * Created by GianhTNS on 23/08/2016.
  */
+@Root(strict = false)
 public class NewsEnclosure {
     private String mId;
-    private String mLink;
+    @Element(name = "url", required = false)
+    private String mLinkEnclosure;
+    @Element(name = "length", required = false)
     private String mLength;
+    @Element(name = "type", required = false)
     private String mType;
-
-    public NewsEnclosure(String id, String link, String length, String type) {
-        this.mId = id;
-        this.mLink = link;
-        this.mLength = length;
-        this.mType = type;
-    }
-
-    public NewsEnclosure() {
-    }
-
-    // dummy data
-    public static NewsEnclosure newInstance() {
-        return new NewsEnclosure("", "link", "length", "type");
-    }
 
     public String getId() {
         return mId;
@@ -34,11 +26,11 @@ public class NewsEnclosure {
     }
 
     public String getLink() {
-        return mLink;
+        return mLinkEnclosure;
     }
 
     public void setLink(String mLink) {
-        this.mLink = mLink;
+        this.mLinkEnclosure = mLink;
     }
 
     public String getLength() {

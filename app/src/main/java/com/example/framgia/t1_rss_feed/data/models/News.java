@@ -1,50 +1,33 @@
 package com.example.framgia.t1_rss_feed.data.models;
 
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
 
 /**
  * Copyright @ 2016 Framgia inc
- * Created by GianhTNS on 23/08/2016.
+ * Created by GianhTNS on 26/08/2016.
  */
+@Root(name = "rss", strict = false)
 public class News {
-    private String mId;
-    private NewsFeed mFeed;
-    private NewsItem mItem;
+    @Element(name = "version", required = false)
+    private String mVersion;
+    @Element(name = "channel")
+    private Channel mChannel;
 
-    public News(String id, NewsFeed feed, NewsItem item) {
-        this.mId = id;
-        this.mFeed = feed;
-        this.mItem = item;
+    public String getVersion() {
+        return mVersion;
     }
 
-    public News() {
+    public void setVersion(String version) {
+        this.mVersion = version;
     }
 
-    // dummy data
-    public static News newInstance() {
-        return new News("", NewsFeed.newInstance(), NewsItem.newInstance());
+    public Channel getChannel() {
+        return mChannel;
     }
 
-    public String getId() {
-        return mId;
-    }
-
-    public void setId(String mId) {
-        this.mId = mId;
-    }
-
-    public NewsFeed getFeed() {
-        return mFeed;
-    }
-
-    public void setFeed(NewsFeed mFeed) {
-        this.mFeed = mFeed;
-    }
-
-    public NewsItem getItem() {
-        return mItem;
-    }
-
-    public void setItem(NewsItem mItem) {
-        this.mItem = mItem;
+    public void setChannel(Channel channel) {
+        this.mChannel = channel;
     }
 }
+

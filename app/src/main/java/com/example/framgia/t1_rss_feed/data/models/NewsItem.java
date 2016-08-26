@@ -1,151 +1,104 @@
 package com.example.framgia.t1_rss_feed.data.models;
 
-import java.util.ArrayList;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementList;
+
 import java.util.List;
 
 /**
  * Copyright @ 2016 Framgia inc
- * Created by GianhTNS on 23/08/2016.
+ * Created by GianhTNS on 26/08/2016.
  */
+@Element(name = "item")
 public class NewsItem {
-    private String mId;
-    private String mTitle;
+    @Element(name = "guid")
     private String mGuid;
+    @Element(name = "pubDate")
     private String mPubDate;
-    private String mAuthor;
-    private String mThumbnail;
+    @Element(name = "title")
+    private String mTitle;
+    @ElementList(entry = "category", inline = true)
+    private List<String> mCategory;
+    @Element(name = "description")
     private String mDescription;
-    private String mContent;
-    private Boolean mViewed;
-    private List<Category> mCategories;
+    @Element(name = "link", required = false)
+    private String mLinkItem;
+    @Element(name = "enclosure")
     private NewsEnclosure mEnclosure;
+    @Element(name = "author", required = false)
+    private String mAuthor;
+    @Element(name = "comments", required = false)
+    private String mComments;
 
-    public NewsItem(String id,
-                    String title,
-                    String guid,
-                    String pubDate,
-                    String author,
-                    String thumbnail,
-                    String description,
-                    String content,
-                    Boolean viewed,
-                    List<Category> categories,
-                    NewsEnclosure enclosure) {
-        this.mId = id;
-        this.mTitle = title;
-        this.mGuid = guid;
-        this.mPubDate = pubDate;
-        this.mAuthor = author;
-        this.mThumbnail = thumbnail;
-        this.mDescription = description;
-        this.mContent = content;
-        this.mViewed = viewed;
-        this.mCategories = categories;
-        this.mEnclosure = enclosure;
+    public String getComments() {
+        return mComments;
     }
 
-    public NewsItem() {
-    }
-
-    public static NewsItem newInstance() {
-        return new NewsItem("",
-                "title",
-                "guid",
-                "10/10/2010",
-                "author",
-                "thumnail",
-                "description",
-                "content",
-                false,
-                new ArrayList<Category>(),
-                NewsEnclosure.newInstance());
-    }
-
-    public String getId() {
-        return mId;
-    }
-
-    public void setId(String mId) {
-        this.mId = mId;
-    }
-
-    public String getTitle() {
-        return mTitle;
-    }
-
-    public void setTitle(String mTitle) {
-        this.mTitle = mTitle;
-    }
-
-    public String getGuid() {
-        return mGuid;
-    }
-
-    public void setGuid(String mGuid) {
-        this.mGuid = mGuid;
-    }
-
-    public String getPubDate() {
-        return mPubDate;
-    }
-
-    public void setPubDate(String mPubDate) {
-        this.mPubDate = mPubDate;
+    public void setComments(String comments) {
+        this.mComments = comments;
     }
 
     public String getAuthor() {
         return mAuthor;
     }
 
-    public void setAuthor(String mAuthor) {
-        this.mAuthor = mAuthor;
-    }
-
-    public String getThumbnail() {
-        return mThumbnail;
-    }
-
-    public void setThumbnail(String mThumbnail) {
-        this.mThumbnail = mThumbnail;
-    }
-
-    public String getDescription() {
-        return mDescription;
-    }
-
-    public void setDescription(String mDescription) {
-        this.mDescription = mDescription;
-    }
-
-    public String getContent() {
-        return mContent;
-    }
-
-    public void setContent(String mContent) {
-        this.mContent = mContent;
-    }
-
-    public Boolean getViewed() {
-        return mViewed;
-    }
-
-    public void setViewed(Boolean mViewed) {
-        this.mViewed = mViewed;
-    }
-
-    public List<Category> getCategories() {
-        return mCategories;
-    }
-
-    public void setCategories(List<Category> mCategories) {
-        this.mCategories = mCategories;
+    public void setAuthor(String author) {
+        this.mAuthor = author;
     }
 
     public NewsEnclosure getEnclosure() {
         return mEnclosure;
     }
 
-    public void setEnclosure(NewsEnclosure mEnclosure) {
-        this.mEnclosure = mEnclosure;
+    public void setEnclosure(NewsEnclosure enclosure) {
+        this.mEnclosure = enclosure;
+    }
+
+    public String getGuid() {
+        return mGuid;
+    }
+
+    public void setGuid(String guid) {
+        this.mGuid = guid;
+    }
+
+    public String getPubDate() {
+        return mPubDate;
+    }
+
+    public void setPubDate(String pubDate) {
+        this.mPubDate = pubDate;
+    }
+
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public void setTitle(String title) {
+        this.mTitle = title;
+    }
+
+    public List<String> getCategory() {
+        return mCategory;
+    }
+
+    public void setCategory(List<String> category) {
+        this.mCategory = category;
+    }
+
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public void setDescription(String description) {
+        this.mDescription = description;
+    }
+
+    public String getLink() {
+        return mLinkItem;
+    }
+
+    public void setLink(String link) {
+        this.mLinkItem = link;
     }
 }

@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +16,16 @@ import com.example.framgia.t1_rss_feed.Constants;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.News;
 import com.example.framgia.t1_rss_feed.helper.EndlessRecyclerViewScrollListener;
+import com.example.framgia.t1_rss_feed.network.ApiInterface;
+import com.example.framgia.t1_rss_feed.network.ServiceGenerator;
 import com.example.framgia.t1_rss_feed.ui.adapter.HomeAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 /**
  * Copyright @ 2016 Framgia inc
@@ -33,8 +38,7 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNews
     private HomeAdapter mHomeAdapter;
 
     public static HomeFragment newInstance() {
-        HomeFragment homeFragment = new HomeFragment();
-        return homeFragment;
+        return new HomeFragment();
     }
 
     @Nullable
@@ -50,12 +54,12 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNews
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        loadData();
     }
 
     private void initView(View view) {
         mSwipeRefreshHome = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_home);
         mRecyclerViewHome = (RecyclerView) view.findViewById(R.id.recycler_home);
-
     }
 
     private void initSwipeToRefresh() {
@@ -73,11 +77,11 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNews
      */
     private void reloadData() {
         mHomeAdapter.clearData();
-        mHomeAdapter.addData(dummyData());
+        //todo reload data
     }
 
     private void initRecyclerView() {
-        mHomeAdapter = new HomeAdapter(getActivity(), dummyData(), this);
+        mHomeAdapter = new HomeAdapter(new ArrayList<News>(), this);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerViewHome.setLayoutManager(layoutManager);
         mRecyclerViewHome.setAdapter(mHomeAdapter);
@@ -89,23 +93,11 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNews
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mHomeAdapter.addData(dummyData());
+                        //todo load more event
                     }
                 }, Constants.DEFAULT_DELAY);
             }
         });
-    }
-
-    /**
-     * create dummy data, return list of news
-     */
-    private static List<News> dummyData() {
-        // dummy data
-        List<News> dummyData = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            dummyData.add(News.newInstance());
-        }
-        return dummyData;
     }
 
     /**
@@ -118,6 +110,20 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNews
                 mSwipeRefreshHome.setRefreshing(isShowLoading);
             }
         }, Constants.DEFAULT_DELAY);
+    }
+
+    private void loadData() {
+        ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class);
+        Call<News> call = apiInterface.loadNewsOfAsian();
+        call.enqueue(new Callback<News>() {
+            @Override
+            public void onResponse(Call<News> call, Response<News> response) {
+            }
+
+            @Override
+            public void onFailure(Call<News> call, Throwable t) {
+            }
+        });
     }
 
     @Override
