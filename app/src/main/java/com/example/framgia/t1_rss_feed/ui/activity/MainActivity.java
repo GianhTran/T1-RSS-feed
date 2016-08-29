@@ -2,11 +2,13 @@ package com.example.framgia.t1_rss_feed.ui.activity;
 
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.framgia.t1_rss_feed.BaseActivity;
+import com.example.framgia.t1_rss_feed.Constants;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.ui.fragment.HomeFragment;
 

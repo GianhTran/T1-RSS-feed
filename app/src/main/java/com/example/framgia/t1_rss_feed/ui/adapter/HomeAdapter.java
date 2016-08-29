@@ -26,11 +26,9 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public OnItemNewsClickListener mOnItemNewClickListener;
 
     private List<News> mNews = new ArrayList<>();
-    private Context mContext;
 
-    public HomeAdapter(Context context, List<News> news, OnItemNewsClickListener listener) {
+    public HomeAdapter(List<News> news, OnItemNewsClickListener listener) {
         this.mNews = news;
-        this.mContext = context;
         this.mOnItemNewClickListener = listener;
     }
 
@@ -57,7 +55,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_ITEM:
-                ((ItemHolder) holder).injectData(mNews.get(position));
+                ((ItemHolder) holder).injectData();
                 break;
             default:
                 break;
@@ -79,6 +77,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     /**
      * method add data into list
      */
+    //todo using later
     public void addData(List<News> data) {
         mNews.addAll(data);
         notifyItemRangeInserted(getItemCount() - 1, data.size());
@@ -111,15 +110,16 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             mTvTitle = (TextView) view.findViewById(R.id.text_title);
         }
 
-        public void injectData(final News item) {
-            mTvContent.setText(item.getItem().getContent());
-            mTvTime.setText(item.getItem().getPubDate());
-            mTvTitle.setText(item.getItem().getTitle());
+        public void injectData() {
+            //todo update data here
+            mTvContent.setText("");
+            mTvTime.setText("");
+            mTvTitle.setText("");
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mOnItemNewClickListener.onItemNewsClick(item.getId());
+                    mOnItemNewClickListener.onItemNewsClick("");
                 }
             });
         }
