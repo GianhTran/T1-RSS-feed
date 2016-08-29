@@ -1,24 +1,41 @@
 package com.example.framgia.t1_rss_feed.data.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 
-import java.util.List;
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Copyright @ 2016 Framgia inc
  * Created by GianhTNS on 26/08/2016.
  */
 @Element(name = "item")
-public class NewsItem {
+public class NewsItem extends RealmObject implements Parcelable {
+    public static final Parcelable.Creator<NewsItem> CREATOR
+        = new Parcelable.Creator<NewsItem>() {
+        public NewsItem createFromParcel(Parcel parcel) {
+            return new NewsItem(parcel);
+        }
+
+        public NewsItem[] newArray(int size) {
+            return new NewsItem[size];
+        }
+    };
+    @PrimaryKey
+    private String mId;
     @Element(name = "guid")
     private String mGuid;
     @Element(name = "pubDate")
     private String mPubDate;
     @Element(name = "title")
     private String mTitle;
-    @ElementList(entry = "category", inline = true)
-    private List<String> mCategory;
+    @ElementList(entry = "category", inline = true, required = false)
+    private RealmList<Category> mCategory;
     @Element(name = "description")
     private String mDescription;
     @Element(name = "link", required = false)
@@ -29,6 +46,32 @@ public class NewsItem {
     private String mAuthor;
     @Element(name = "comments", required = false)
     private String mComments;
+    private String mChannel;
+
+    public NewsItem() {
+    }
+
+    private NewsItem(Parcel parcel) {
+        mId = parcel.readString();
+        mTitle = parcel.readString();
+        mDescription = parcel.readString();
+        mPubDate = parcel.readString();
+        mLinkItem = parcel.readString();
+        mAuthor = parcel.readString();
+        mEnclosure.setLink(parcel.readString());
+    }
+
+    public String getmChannel() {
+        return mChannel;
+    }
+
+    public void setmChannel(String mChannel) {
+        this.mChannel = mChannel;
+    }
+
+    public String getId() {
+        return mId;
+    }
 
     public String getComments() {
         return mComments;
@@ -78,11 +121,11 @@ public class NewsItem {
         this.mTitle = title;
     }
 
-    public List<String> getCategory() {
+    public RealmList<Category> getCategory() {
         return mCategory;
     }
 
-    public void setCategory(List<String> category) {
+    public void setCategory(RealmList<Category> category) {
         this.mCategory = category;
     }
 
@@ -100,5 +143,21 @@ public class NewsItem {
 
     public void setLink(String link) {
         this.mLinkItem = link;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(mId);
+        parcel.writeString(mTitle);
+        parcel.writeString(mDescription);
+        parcel.writeString(mPubDate);
+        parcel.writeString(mLinkItem);
+        parcel.writeString(mAuthor);
+        parcel.writeString(mEnclosure.getLink());
     }
 }

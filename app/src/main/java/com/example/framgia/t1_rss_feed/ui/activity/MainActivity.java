@@ -1,14 +1,11 @@
 package com.example.framgia.t1_rss_feed.ui.activity;
 
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.framgia.t1_rss_feed.BaseActivity;
-import com.example.framgia.t1_rss_feed.Constants;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.helper.RealmController;
 import com.example.framgia.t1_rss_feed.ui.fragment.HomeFragment;
@@ -20,19 +17,14 @@ import io.realm.Realm;
  * Created by GianhTNS on 23/08/2016.
  */
 public class MainActivity extends BaseActivity {
-
-    private Toolbar mToolbarHome;
     private Realm mRealm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initToolbar();
-
         //get realm instance
         this.mRealm = RealmController.with(this).getRealm();
-
         changeFragment(R.id.frame_container, HomeFragment.newInstance(), "");
     }
 
@@ -55,9 +47,12 @@ public class MainActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void initToolbar() {
-        mToolbarHome = (Toolbar) findViewById(R.id.toolbar_home);
-        setSupportActionBar(mToolbarHome);
-        mToolbarHome.setLogo(R.drawable.ic_logo);
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

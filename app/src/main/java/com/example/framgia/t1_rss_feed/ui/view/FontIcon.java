@@ -15,7 +15,6 @@ import com.example.framgia.t1_rss_feed.helper.TypefaceCache;
 public class FontIcon extends TextView {
     private static Typeface sFont;
 
-
     public FontIcon(Context context) {
         super(context);
         setFont(context);
@@ -36,13 +35,12 @@ public class FontIcon extends TextView {
         if (this.isInEditMode()) {
             return;
         }
-
         //Check for font is already loaded
         if (sFont == null) {
             //Cache the font load status to improve performance
-            sFont = TypefaceCache.get(context, getResources().getString(R.string.font_material_icon));
+            sFont =
+                TypefaceCache.get(context, getResources().getString(R.string.font_material_icon));
         }
-
         //Finally set the font
         setTypeface(sFont);
     }

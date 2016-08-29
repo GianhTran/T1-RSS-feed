@@ -3,7 +3,25 @@
     <string name="font_material_icon">fonts/Material-Design-Iconic-Font.ttf</string>
     <!-- Font Icon Code -->
     <string name="ic_view">&#xf27d;</string>
+    <!-- project string -->
+    <string name="title_prompt">Choose a channel</string>
+    <string name="msg_data_empty">data empty</string>
     <string name="msg_see_more_at_link">see more at : <u>[link]</u></string>
     <string name="app_title">news online</string>
     <string name="menu_history">history</string>
+    <string name="msg_read_more">click to readmore</string>
+    <!-- spinner data -->
+    <string-array name="channel_arrays">
+        <item>Asia - Voice of America</item>
+        <item>USA - Voice of America</item>
+        <item>Africa - Voice of America</item>
+        <item>Middle East - Voice of America</item>
+        <item>Europe - Voice of America</item>
+        <item>Health - Voice of America</item>
+        <item>Arts &amp; Entertainment - Voice of America</item>
+        <item>2016 USA Votes - Voice of America</item>
+        <item>One-Minute Features - Voice of America</item>
+        <item>Extremism Watch - Voice of America</item>
+        <item>Day in Photos - Voice of America</item>
+    </string-array>
 </resources>

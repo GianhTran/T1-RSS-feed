@@ -1,11 +1,13 @@
 package com.example.framgia.t1_rss_feed.data.models;
 
 import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
 
 /**
  * Copyright @ 2016 Framgia inc
  * Created by GianhTNS on 26/08/2016.
  */
+@Root(strict = false)
 public class NewsImage {
     @Element(name = "title")
     private String mTitle;

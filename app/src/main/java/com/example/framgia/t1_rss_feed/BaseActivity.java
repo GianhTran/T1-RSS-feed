@@ -8,11 +8,10 @@ import android.support.v7.app.AppCompatActivity;
  * Created by GianhTNS on 23/08/2016.
  */
 public class BaseActivity extends AppCompatActivity {
-
     protected void changeFragment(int containerId, Fragment fragment, String tag) {
         getFragmentManager().beginTransaction()
-                .replace(containerId, fragment, tag)
-                .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-                .commitAllowingStateLoss();
+            .replace(containerId, fragment, tag)
+            .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+            .commitAllowingStateLoss();
     }
 }

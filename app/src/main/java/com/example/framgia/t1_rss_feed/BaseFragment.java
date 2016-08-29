@@ -7,12 +7,11 @@ import android.app.Fragment;
  * Created by GianhTNS on 23/08/2016.
  */
 public class BaseFragment extends Fragment {
-
     protected void replaceFragment(int containerViewId, Fragment fragment) {
         getActivity().getFragmentManager().beginTransaction()
-                .addToBackStack(null)
-                .replace(containerViewId, fragment)
-                .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-                .commitAllowingStateLoss();
+            .addToBackStack(null)
+            .replace(containerViewId, fragment)
+            .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+            .commitAllowingStateLoss();
     }
 }

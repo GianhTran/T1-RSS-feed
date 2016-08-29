@@ -8,7 +8,6 @@ import org.simpleframework.xml.Text;
 
 import java.util.List;
 
-
 /**
  * Copyright @ 2016 Framgia inc
  * Created by GianhTNS on 26/08/2016.
@@ -19,7 +18,8 @@ public class Channel {
     private String mTitle;
     @Element(name = "description")
     private String mDescription;
-    @Element(name = "link", required = false)
+    @Path("link")
+    @Text(required = false)
     private String mLinkChannel;
     @Element(name = "lastBuildDate")
     private String mLastBuildDate;
