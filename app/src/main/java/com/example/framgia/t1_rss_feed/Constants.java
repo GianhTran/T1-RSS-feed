@@ -7,6 +7,7 @@ package com.example.framgia.t1_rss_feed;
 public class Constants {
     public static final String TAG = "GianhTran";
     public static final int DEFAULT_DELAY = 2000;
+    public static final int REALM_SCHEMA_VERSION = 0;
     public static final Long CONNECT_TIME_OUT = 20000L;
     public static final Long READ_TIME_OUT = 20000L;
 }
