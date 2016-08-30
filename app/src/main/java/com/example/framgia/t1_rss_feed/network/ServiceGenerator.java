@@ -14,15 +14,13 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
  */
 public class ServiceGenerator {
     public static final String API_BASE_URL = "http://www.voanews.com/api/";
-
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
-            .connectTimeout(Constants.CONNECT_TIME_OUT, TimeUnit.MILLISECONDS)
-            .readTimeout(Constants.READ_TIME_OUT, TimeUnit.MILLISECONDS);
-
+        .connectTimeout(Constants.CONNECT_TIME_OUT, TimeUnit.MILLISECONDS)
+        .readTimeout(Constants.READ_TIME_OUT, TimeUnit.MILLISECONDS);
     private static Retrofit.Builder builder =
-            new Retrofit.Builder()
-                    .baseUrl(API_BASE_URL)
-                    .addConverterFactory(SimpleXmlConverterFactory.create());
+        new Retrofit.Builder()
+            .baseUrl(API_BASE_URL)
+            .addConverterFactory(SimpleXmlConverterFactory.create());
 
     public static <S> S createService(Class<S> serviceClass) {
         Retrofit retrofit = builder.client(httpClient.build()).build();

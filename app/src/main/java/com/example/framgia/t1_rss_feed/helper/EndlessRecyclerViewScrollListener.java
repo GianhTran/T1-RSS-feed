@@ -10,6 +10,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
  * Created by GianhTNS on 24/08/2016.
  */
 public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
+    RecyclerView.LayoutManager mLayoutManager;
     // The minimum amount of items to have below your current scroll position
     // before loading more.
     private int mVisibleThreshold = 5;
@@ -21,8 +22,6 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     private boolean mLoading = true;
     // Sets the starting page index
     private int mStartingPageIndex = 0;
-
-    RecyclerView.LayoutManager mLayoutManager;
 
     public EndlessRecyclerViewScrollListener(LinearLayoutManager layoutManager) {
         this.mLayoutManager = layoutManager;
@@ -57,17 +56,18 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     public void onScrolled(RecyclerView view, int dx, int dy) {
         int lastVisibleItemPosition = 0;
         int totalItemCount = mLayoutManager.getItemCount();
-
         if (mLayoutManager instanceof StaggeredGridLayoutManager) {
-            int[] lastVisibleItemPositions = ((StaggeredGridLayoutManager) mLayoutManager).findLastVisibleItemPositions(null);
+            int[] lastVisibleItemPositions =
+                ((StaggeredGridLayoutManager) mLayoutManager).findLastVisibleItemPositions(null);
             // get maximum element within the list
             lastVisibleItemPosition = getLastVisibleItem(lastVisibleItemPositions);
         } else if (mLayoutManager instanceof LinearLayoutManager) {
-            lastVisibleItemPosition = ((LinearLayoutManager) mLayoutManager).findLastVisibleItemPosition();
+            lastVisibleItemPosition =
+                ((LinearLayoutManager) mLayoutManager).findLastVisibleItemPosition();
         } else if (mLayoutManager instanceof GridLayoutManager) {
-            lastVisibleItemPosition = ((GridLayoutManager) mLayoutManager).findLastVisibleItemPosition();
+            lastVisibleItemPosition =
+                ((GridLayoutManager) mLayoutManager).findLastVisibleItemPosition();
         }
-
         // If the total item count is zero and the previous isn't, assume the
         // list is invalidated and should be reset back to initial state
         if (totalItemCount < mPreviousTotalItemCount) {
@@ -84,7 +84,6 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
             mLoading = false;
             mPreviousTotalItemCount = totalItemCount;
         }
-
         // If it isn’t currently loading, we check to see if we have breached
         // the visibleThreshold and need to reload more data.
         // If we do need to reload some more data, we execute onLoadMore to fetch the data.
@@ -98,5 +97,4 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
 
     // Defines the process for actually loading more data based on page
     public abstract void onLoadMore(int page, int totalItemsCount);
-
 }

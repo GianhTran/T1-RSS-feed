@@ -14,7 +14,8 @@ public class Preferences {
     private final SharedPreferences SHARE_PREFERENCES;
 
     public Preferences(Context context) {
-        SHARE_PREFERENCES = context.getApplicationContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SHARE_PREFERENCES =
+            context.getApplicationContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
 
     public static Preferences with(Context context) {
@@ -24,14 +25,14 @@ public class Preferences {
         return sInstance;
     }
 
-    public void setPreLoad(boolean totalTime) {
-        SHARE_PREFERENCES
-                .edit()
-                .putBoolean(PRE_LOAD, totalTime)
-                .apply();
-    }
-
     public boolean getPreLoad() {
         return SHARE_PREFERENCES.getBoolean(PRE_LOAD, false);
+    }
+
+    public void setPreLoad(boolean totalTime) {
+        SHARE_PREFERENCES
+            .edit()
+            .putBoolean(PRE_LOAD, totalTime)
+            .apply();
     }
 }

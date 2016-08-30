@@ -1,15 +1,13 @@
 package com.example.framgia.t1_rss_feed.ui.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.framgia.t1_rss_feed.R;
-import com.example.framgia.t1_rss_feed.data.models.News;
+import com.example.framgia.t1_rss_feed.data.models.NewsItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,15 +17,12 @@ import java.util.List;
  * Created by GianhTNS on 23/08/2016.
  */
 public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
     private final int VIEW_TYPE_ITEM = 1;
     private final int VIEW_TYPE_LOAD_MORE = 2;
-
     public OnItemNewsClickListener mOnItemNewClickListener;
+    private List<NewsItem> mNews = new ArrayList<>();
 
-    private List<News> mNews = new ArrayList<>();
-
-    public HomeAdapter(List<News> news, OnItemNewsClickListener listener) {
+    public HomeAdapter(List<NewsItem> news, OnItemNewsClickListener listener) {
         this.mNews = news;
         this.mOnItemNewClickListener = listener;
     }
@@ -38,13 +33,13 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         switch (viewType) {
             case VIEW_TYPE_ITEM:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_new,
-                        parent,
-                        false);
+                    parent,
+                    false);
                 return new ItemHolder(view);
             case VIEW_TYPE_LOAD_MORE:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_loadmore,
-                        parent,
-                        false);
+                    parent,
+                    false);
                 return new LoadMoreHolder(view);
             default:
                 return null;
@@ -55,7 +50,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_ITEM:
-                ((ItemHolder) holder).injectData();
+                ((ItemHolder) holder).injectData(mNews.get(position));
                 break;
             default:
                 break;
@@ -77,22 +72,30 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     /**
      * method add data into list
      */
-    //todo using later
-    public void addData(List<News> data) {
+    public void addData(List<NewsItem> data) {
         mNews.addAll(data);
         notifyItemRangeInserted(getItemCount() - 1, data.size());
     }
 
     public void clearData() {
         mNews.clear();
-        notifyItemRangeRemoved(0, getItemCount() - 1);
+        notifyDataSetChanged();
     }
 
     /**
      * handler item click listener
      */
     public interface OnItemNewsClickListener {
-        void onItemNewsClick(String id);
+        void onItemNewsClick(NewsItem item);
+    }
+
+    /**
+     * holder of load more
+     */
+    public static class LoadMoreHolder extends RecyclerView.ViewHolder {
+        public LoadMoreHolder(View view) {
+            super(view);
+        }
     }
 
     /**
@@ -110,30 +113,16 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             mTvTitle = (TextView) view.findViewById(R.id.text_title);
         }
 
-        public void injectData() {
-            //todo update data here
-            mTvContent.setText("");
-            mTvTime.setText("");
-            mTvTitle.setText("");
-
+        public void injectData(final NewsItem item) {
+            mTvContent.setText(item.getDescription());
+            mTvTime.setText(item.getPubDate());
+            mTvTitle.setText(item.getTitle());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mOnItemNewClickListener.onItemNewsClick("");
+                    mOnItemNewClickListener.onItemNewsClick(item);
                 }
             });
-        }
-    }
-
-    /**
-     * holder of load more
-     */
-    public static class LoadMoreHolder extends RecyclerView.ViewHolder {
-        ProgressBar mProgressBarHome;
-
-        public LoadMoreHolder(View view) {
-            super(view);
-            mProgressBarHome = (ProgressBar) view.findViewById(R.id.progressbar_home);
         }
     }
 }

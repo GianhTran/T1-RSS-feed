@@ -14,10 +14,10 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
-                .name(Realm.DEFAULT_REALM_NAME)
-                .schemaVersion(Constants.REALM_SCHEMA_VERSION)
-                .deleteRealmIfMigrationNeeded()
-                .build();
+            .name(Realm.DEFAULT_REALM_NAME)
+            .schemaVersion(Constants.REALM_SCHEMA_VERSION)
+            .deleteRealmIfMigrationNeeded()
+            .build();
         Realm.setDefaultConfiguration(realmConfiguration);
     }
 }

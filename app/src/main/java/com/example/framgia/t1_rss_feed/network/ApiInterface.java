@@ -12,34 +12,24 @@ import retrofit2.http.GET;
 public interface ApiInterface {
     @GET("zo$o_egviy")
     Call<News> loadNewsOfAsian();
-
     @GET("zq$omekvi_")
     Call<News> loadNewsOfUsa();
-
     @GET("z-$otevtiq")
     Call<News> loadNewsOfAfrica();
-
     @GET("zr$opeuvim")
     Call<News> loadNewsOfMiddleEast();
-
     @GET("zj$oveytit")
     Call<News> loadNewsOfEurope();
-
     @GET("zt$opeitim")
     Call<News> loadNewsOfHealth();
-
     @GET("zp$ove-vir")
     Call<News> loadNewsOfArt();
-
     @GET("zuriqiepuiqm")
     Call<News> loadNewsOf2016UsaVotes();
-
     @GET("z$roqmetuoqm")
     Call<News> loadNewsOfOneMinuteFeatures();
-
     @GET("z$uiqyetppqv")
     Call<News> loadNewsOfExtremismWatch();
-
     @GET("z$-jqetv-i")
     Call<News> loadNewsOfDayInPhotos();
 }
