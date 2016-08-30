@@ -3,11 +3,15 @@ package com.example.framgia.t1_rss_feed.data.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.framgia.t1_rss_feed.Constants;
+
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 
+import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
 
 /**
@@ -27,7 +31,7 @@ public class NewsItem extends RealmObject implements Parcelable {
         }
     };
     @PrimaryKey
-    private String mId;
+    private Long mId;
     @Element(name = "guid")
     private String mGuid;
     @Element(name = "pubDate")
@@ -47,30 +51,50 @@ public class NewsItem extends RealmObject implements Parcelable {
     @Element(name = "comments", required = false)
     private String mComments;
     private String mChannel;
+    private Boolean mViewed;
 
     public NewsItem() {
     }
 
     private NewsItem(Parcel parcel) {
-        mId = parcel.readString();
+        mId = parcel.readLong();
         mTitle = parcel.readString();
         mDescription = parcel.readString();
         mPubDate = parcel.readString();
         mLinkItem = parcel.readString();
         mAuthor = parcel.readString();
         mEnclosure.setLink(parcel.readString());
+        mViewed = parcel.readByte() != 0;
     }
 
-    public String getmChannel() {
+    public long getNextPrimaryKey(Realm realm) {
+        RealmResults<NewsItem> newsItems =
+            realm.where(NewsItem.class).findAllSorted(Constants.KEY_ID);
+        return newsItems.isEmpty() ? 0 : newsItems.last().getId() + 1;
+    }
+
+    public Boolean getViewed() {
+        return mViewed;
+    }
+
+    public void setViewed(Boolean viewed) {
+        mViewed = viewed;
+    }
+
+    public String getChannel() {
         return mChannel;
     }
 
-    public void setmChannel(String mChannel) {
+    public void setChannel(String mChannel) {
         this.mChannel = mChannel;
     }
 
-    public String getId() {
+    public Long getId() {
         return mId;
+    }
+
+    public void setId(Long id) {
+        mId = id;
     }
 
     public String getComments() {
@@ -152,12 +176,13 @@ public class NewsItem extends RealmObject implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(mId);
+        parcel.writeLong(mId);
         parcel.writeString(mTitle);
         parcel.writeString(mDescription);
         parcel.writeString(mPubDate);
         parcel.writeString(mLinkItem);
         parcel.writeString(mAuthor);
         parcel.writeString(mEnclosure.getLink());
+        parcel.writeByte((byte) (mViewed ? 1 : 0));
     }
 }

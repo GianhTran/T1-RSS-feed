@@ -7,24 +7,17 @@ import android.widget.Toast;
 
 import com.example.framgia.t1_rss_feed.BaseActivity;
 import com.example.framgia.t1_rss_feed.R;
-import com.example.framgia.t1_rss_feed.helper.RealmController;
 import com.example.framgia.t1_rss_feed.ui.fragment.HomeFragment;
-
-import io.realm.Realm;
 
 /**
  * Copyright @ 2016 Framgia inc
  * Created by GianhTNS on 23/08/2016.
  */
 public class MainActivity extends BaseActivity {
-    private Realm mRealm;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //get realm instance
-        this.mRealm = RealmController.with(this).getRealm();
         changeFragment(R.id.frame_container, HomeFragment.newInstance(), "");
     }
 
