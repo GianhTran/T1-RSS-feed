@@ -4,6 +4,7 @@
     <!-- Font Icon Code -->
     <string name="ic_view">&#xf27d;</string>
     <string name="ic_share">&#xf3ac;</string>
+    <string name="ic_export">&#xf102;</string>
     <!-- project string -->
     <string name="title_prompt">Choose a channel</string>
     <string name="msg_data_empty">data empty</string>
@@ -11,6 +12,8 @@
     <string name="app_title">news online</string>
     <string name="menu_history">history</string>
     <string name="msg_read_more">click to readmore</string>
+    <string name="msg_export_pdf_error">opps! export PDF fail</string>
+    <string name="msg_export_pdf_success">export PDF file success!</string>
     <string name="title_share">share title</string>
     <!-- spinner data -->
     <string-array name="channel_arrays">

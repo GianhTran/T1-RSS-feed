@@ -1,11 +1,11 @@
 package com.example.framgia.t1_rss_feed.ui.fragment;
 
-import android.os.AsyncTask;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -17,17 +17,29 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.framgia.t1_rss_feed.BaseFragment;
 import com.example.framgia.t1_rss_feed.Constants;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
-import com.example.framgia.t1_rss_feed.ui.view.FontIcon;
 import com.example.framgia.t1_rss_feed.data.models.TempNews;
+import com.example.framgia.t1_rss_feed.ui.view.FontIcon;
 import com.example.framgia.t1_rss_feed.util.CommonUtil;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.realm.Realm;
@@ -45,7 +57,7 @@ public class DetailFragment extends BaseFragment {
     private TextView mTvContentDetail;
     private TextView mTvLink;
     private TextView mTvAuthor;
-    private FontIcon mFontIconViewed;
+    private FontIcon mFontIconPrint;
     private FontIcon mFontIconShare;
     private String mShareLink = null;
     private DetailFragment mDetailFragment;
@@ -64,6 +76,7 @@ public class DetailFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
+        mDetailFragment = this;
         initToolbar();
         initView(view);
         handleEvent();
@@ -79,8 +92,9 @@ public class DetailFragment extends BaseFragment {
         mTvContentDetail = (TextView) view.findViewById(R.id.text_content_detail);
         mTvLink = (TextView) view.findViewById(R.id.text_link);
         mTvAuthor = (TextView) view.findViewById(R.id.text_author);
-        mFontIconViewed = (FontIcon) view.findViewById(R.id.font_viewed);
+        mFontIconPrint = (FontIcon) view.findViewById(R.id.font_print);
         mFontIconShare = (FontIcon) view.findViewById(R.id.font_share);
+        mProgressBarDetail = (ProgressBar) view.findViewById(R.id.progress_bar_detail);
     }
 
     private void handleEvent() {
@@ -91,13 +105,14 @@ public class DetailFragment extends BaseFragment {
                     startActivity(getIntentShare(getActivity(), mShareLink));
             }
         });
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mProgressBarDetail = (ProgressBar) view.findViewById(R.id.progress_bar_detail);
-        mDetailFragment = this;
+        mFontIconPrint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new CreatePdfAsyncTask(mTvTitleDetail.getText().toString(),
+                    mTvContentDetail.getText().toString(),
+                    mTvAuthor.getText().toString()).execute();
+            }
+        });
     }
 
     private void initToolbar() {
@@ -111,6 +126,56 @@ public class DetailFragment extends BaseFragment {
                 replaceFragment(R.id.frame_container, HomeFragment.newInstance());
             }
         });
+    }
+
+    /**
+     * async task using to create pdf file
+     */
+    private class CreatePdfAsyncTask extends AsyncTask<Void, Void, String> {
+        private String mTitle;
+        private String mContent;
+        private String mAuthor;
+
+        public CreatePdfAsyncTask(String author, String content, String title) {
+            super();
+            mTitle = title;
+            mContent = content;
+            mAuthor = author;
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            //Using time to make file name
+            Date date = new Date();
+            String timeStamp = new SimpleDateFormat(Constants.DATE_TIME_FORMAT).format(date);
+            File myFile = new File(getActivity().getExternalFilesDir(Constants.FILE_PATH),
+                Constants.PDF_TITLE + timeStamp + Constants.PDF_TYPE);
+            OutputStream output;
+            try {
+                output = new FileOutputStream(myFile);
+                Document document = new Document(PageSize.LETTER);
+                PdfWriter.getInstance(document, output);
+                document.open();
+                //Add content
+                document.add(new Paragraph(mTitle));
+                document.add(new Paragraph(mContent));
+                document.add(new Paragraph(mAuthor));
+                //Close the document
+                document.close();
+                output.close();
+                return getResources().getText(R.string.msg_export_pdf_success).toString();
+            } catch (DocumentException | IOException error) {
+                return getResources().getText(R.string.msg_export_pdf_error).toString();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String msg) {
+            super.onPostExecute(msg);
+            Toast.makeText(getActivity(),
+                msg,
+                Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void showLoading(Boolean isLoading) {
