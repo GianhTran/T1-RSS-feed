@@ -63,12 +63,31 @@
             android:layout_marginTop="@dimen/dimen_small"
             android:gravity="end"/>
 
-        <com.example.framgia.t1_rss_feed.ui.view.FontIcon
-            android:id="@+id/font_viewed"
-            style="@style/FontIconStyle"
-            android:layout_gravity="end"
-            android:layout_marginTop="@dimen/dimen_small"
-            android:text="@string/ic_view"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.example.framgia.t1_rss_feed.ui.view.FontIcon
+                android:id="@+id/font_viewed"
+                style="@style/FontIconStyle"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="@dimen/dimen_small"
+                android:text="@string/ic_view"/>
+
+            <com.example.framgia.t1_rss_feed.ui.view.FontIcon
+                android:id="@+id/font_share"
+                style="@style/FontIconStyle"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="@dimen/dimen_small"
+                android:text="@string/ic_view"/>
+
+        </RelativeLayout>
+
+
     </LinearLayout>
 
 </ScrollView>

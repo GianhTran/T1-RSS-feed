@@ -23,6 +23,13 @@ public class Constants {
     public static final int ONE_MINUTE_FEATURE_CHANNEL = 8;
     public static final int EXTREME_CHANNEL = 9;
     public static final int PHOTO_CHANNEL = 10;
+    // intent type
+    public static final String INTENT_TYPE = "text/plain";
+    // package name
+    public static final String PACKAGE_NAME_FACEBOOK = "com.facebook.katana";
+    public static final String PACKAGE_NAME_LINKEDIN = "com.linkedin.android";
+    public static final String PACKAGE_NAME_GOOGLE_PLUS = "com.google.android.apps.plus";
+    public static final String PACKAGE_NAME_TWITTER = "com.twitter.android";
     // query key
     public static final String KEY_ID = "mId";
     public static final String KEY_LINK_ITEM = "mLinkItem";
