@@ -1,5 +1,6 @@
 package com.example.framgia.t1_rss_feed.ui.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,20 +10,22 @@ import android.widget.TextView;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
 
-import java.util.ArrayList;
-import java.util.List;
+import io.realm.RealmList;
+import io.realm.RealmRecyclerViewAdapter;
 
 /**
  * Copyright @ 2016 Framgia inc
  * Created by GianhTNS on 23/08/2016.
  */
-public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class HomeAdapter extends RealmRecyclerViewAdapter<NewsItem, RecyclerView.ViewHolder> {
     private final int VIEW_TYPE_ITEM = 1;
     private final int VIEW_TYPE_LOAD_MORE = 2;
     public OnItemNewsClickListener mOnItemNewClickListener;
-    private List<NewsItem> mNews = new ArrayList<>();
+    private RealmList<NewsItem> mNews;
 
-    public HomeAdapter(List<NewsItem> news, OnItemNewsClickListener listener) {
+    public HomeAdapter(Context context, RealmList<NewsItem> news,
+                       OnItemNewsClickListener listener) {
+        super(context, news, false);
         this.mNews = news;
         this.mOnItemNewClickListener = listener;
     }
@@ -50,7 +53,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_ITEM:
-                ((ItemHolder) holder).injectData(mNews.get(position));
+                ((ItemHolder) holder).injectData(getData().get(position));
                 break;
             default:
                 break;
@@ -66,19 +69,10 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mNews.size() + 1; // 1 item for load more
-    }
-
-    /**
-     * method add data into list
-     */
-    public void addData(List<NewsItem> data) {
-        mNews.addAll(data);
-        notifyItemRangeInserted(getItemCount() - 1, data.size());
+        return super.getItemCount() + 1;// 1 item for load more
     }
 
     public void clearData() {
-        mNews.clear();
         notifyDataSetChanged();
     }
 
@@ -86,7 +80,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      * handler item click listener
      */
     public interface OnItemNewsClickListener {
-        void onItemNewsClick(NewsItem item);
+        void onItemNewsClick(long itemId);
     }
 
     /**
@@ -120,7 +114,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mOnItemNewClickListener.onItemNewsClick(item);
+                    mOnItemNewClickListener.onItemNewsClick(item.getId());
                 }
             });
         }

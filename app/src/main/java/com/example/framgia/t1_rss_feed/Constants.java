@@ -10,7 +10,7 @@ public class Constants {
     public static final int REALM_SCHEMA_VERSION = 0;
     public static final Long CONNECT_TIME_OUT = 20000L;
     public static final Long READ_TIME_OUT = 20000L;
-    public static final String INTENT_KEY_NEWS_ITEM = "intent_key_news_item";
+    public static final String INTENT_KEY_NEWS_ITEM_ID = "intent_key_news_item_id";
     // channel ID
     public static final int ASIAN_CHANNEL = 0;
     public static final int USA_CHANNEL = 1;
@@ -23,4 +23,8 @@ public class Constants {
     public static final int ONE_MINUTE_FEATURE_CHANNEL = 8;
     public static final int EXTREME_CHANNEL = 9;
     public static final int PHOTO_CHANNEL = 10;
+    // query key
+    public static final String KEY_ID = "mId";
+    public static final String KEY_LINK_ITEM = "mLinkItem";
+    public static final String KEY_CHANNEL = "mChannel";
 }

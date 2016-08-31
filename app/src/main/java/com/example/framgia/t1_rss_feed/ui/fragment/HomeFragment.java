@@ -1,5 +1,6 @@
 package com.example.framgia.t1_rss_feed.ui.fragment;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -30,6 +31,8 @@ import com.example.framgia.t1_rss_feed.util.CommonUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmList;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,6 +49,7 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNews
     private Spinner mSpinnerChannel;
     private int mChannelId = Constants.ASIAN_CHANNEL;
     private TextView mTvDataEmpty;
+    private Realm mRealm;
 
     public static HomeFragment newInstance() {
         return new HomeFragment();
@@ -56,6 +60,7 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNews
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+        mRealm = Realm.getDefaultInstance();
         initToolbar();
         initView(view);
         handleEvent();
@@ -110,7 +115,8 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNews
     }
 
     private void initRecyclerView() {
-        mHomeAdapter = new HomeAdapter(new ArrayList<NewsItem>(), this);
+        mHomeAdapter = new HomeAdapter(getActivity(), new RealmList<NewsItem>(),
+            this);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerViewHome.setLayoutManager(layoutManager);
         mRecyclerViewHome.setAdapter(mHomeAdapter);
@@ -188,8 +194,7 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNews
             @Override
             public void onResponse(Call<News> call, Response<News> response) {
                 List<NewsItem> items = response.body().getChannel().getItems();
-                checkData(items);
-                showLoading(false);
+                checkData(items, response.body().getChannel().getTitle());
             }
 
             @Override
@@ -214,8 +219,8 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNews
     }
 
     @Override
-    public void onItemNewsClick(NewsItem item) {
-        replaceFragment(R.id.frame_container, DetailFragment.newInstance(item));
+    public void onItemNewsClick(long itemId) {
+        replaceFragment(R.id.frame_container, DetailFragment.newInstance(itemId));
     }
 
     private void initToolbar() {
@@ -230,12 +235,67 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNews
      *
      * @param items: if items is able in data base, ignore it, else save it into realm
      */
-    private void checkData(List<NewsItem> items) {
-        //todo update later
-        mHomeAdapter.addData(items);
+    private void checkData(List<NewsItem> items, String channel) {
+        new SaveDataAsyncTask(items, channel).execute();
     }
 
     private void showEmpty(Boolean isEmpty) {
         mTvDataEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroy();
+        mRealm.close(); // Remember to close Realm when done.
+    }
+
+    /**
+     * async method using to load list 20 items form data base
+     */
+    private void updateData(final String channel) {
+        mHomeAdapter.updateData(mRealm.where(NewsItem.class).equalTo
+            (Constants.KEY_CHANNEL, channel).findAllSorted(Constants.KEY_ID));
+        showLoading(false);
+    }
+
+    /**
+     * asyncTask using to save list News update from server, ignore news which saved
+     */
+    private class SaveDataAsyncTask extends AsyncTask<Void, Void, Void> {
+        private List<NewsItem> mItems = new ArrayList<>();
+        private String mChannel;
+
+        public SaveDataAsyncTask(List<NewsItem> itemList, String channel) {
+            super();
+            this.mItems = itemList;
+            this.mChannel = channel;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Realm realm = Realm.getDefaultInstance();
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    for (NewsItem itemNew : mItems) {
+                        if (realm.where(NewsItem.class).equalTo
+                            (Constants.KEY_LINK_ITEM, itemNew.getLink()).findAll().size() == 0) {
+                            itemNew.setId(itemNew.getNextPrimaryKey(realm));
+                            itemNew.setChannel(mChannel);
+                            itemNew.setViewed(false);
+                            realm.copyToRealm(itemNew);
+                        }
+                    }
+                }
+            });
+            realm.close();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            updateData(mChannel);
+        }
     }
 }
