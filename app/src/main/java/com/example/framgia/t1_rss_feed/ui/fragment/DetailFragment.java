@@ -1,7 +1,13 @@
 package com.example.framgia.t1_rss_feed.ui.fragment;
 
 import android.os.AsyncTask;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,8 +23,12 @@ import com.example.framgia.t1_rss_feed.BaseFragment;
 import com.example.framgia.t1_rss_feed.Constants;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
+import com.example.framgia.t1_rss_feed.ui.view.FontIcon;
 import com.example.framgia.t1_rss_feed.data.models.TempNews;
 import com.example.framgia.t1_rss_feed.util.CommonUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -35,6 +45,9 @@ public class DetailFragment extends BaseFragment {
     private TextView mTvContentDetail;
     private TextView mTvLink;
     private TextView mTvAuthor;
+    private FontIcon mFontIconViewed;
+    private FontIcon mFontIconShare;
+    private String mShareLink = null;
     private DetailFragment mDetailFragment;
     private ProgressBar mProgressBarDetail;
 
@@ -53,6 +66,7 @@ public class DetailFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         initToolbar();
         initView(view);
+        handleEvent();
         new LoadNewsDetailAsyncTask(getArguments().getLong(Constants.INTENT_KEY_NEWS_ITEM_ID))
             .execute();
         return view;
@@ -65,6 +79,23 @@ public class DetailFragment extends BaseFragment {
         mTvContentDetail = (TextView) view.findViewById(R.id.text_content_detail);
         mTvLink = (TextView) view.findViewById(R.id.text_link);
         mTvAuthor = (TextView) view.findViewById(R.id.text_author);
+        mFontIconViewed = (FontIcon) view.findViewById(R.id.font_viewed);
+        mFontIconShare = (FontIcon) view.findViewById(R.id.font_share);
+    }
+
+    private void handleEvent() {
+        mFontIconShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mShareLink != null)
+                    startActivity(getIntentShare(getActivity(), mShareLink));
+            }
+        });
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         mProgressBarDetail = (ProgressBar) view.findViewById(R.id.progress_bar_detail);
         mDetailFragment = this;
     }
@@ -134,5 +165,45 @@ public class DetailFragment extends BaseFragment {
                 .into(mImgDetail);
             showLoading(false);
         }
+    }
+
+    /**
+     * this method support intent to share content via facebook, twitter, linkedin,google+ app
+     *
+     * @param context context
+     * @param link    share content
+     * @return
+     */
+    public Intent getIntentShare(Context context, String link) {
+        //sharing implementation
+        List<Intent> targetedShareIntents = new ArrayList<Intent>();
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType(Constants.INTENT_TYPE);
+        sharingIntent.setAction(Intent.ACTION_SEND);
+        PackageManager pm = context.getPackageManager();
+        List<ResolveInfo> activityList = pm.queryIntentActivities(sharingIntent, 0);
+        for (ResolveInfo app : activityList) {
+            String packageName = app.activityInfo.packageName;
+            if (packageName.contains(Constants.PACKAGE_NAME_TWITTER) ||
+                packageName.contains(Constants.PACKAGE_NAME_FACEBOOK) ||
+                packageName.contains(Constants.PACKAGE_NAME_LINKEDIN) ||
+                packageName.contains(Constants.PACKAGE_NAME_GOOGLE_PLUS)) {
+                Intent targetedShareIntent = new Intent(android.content.Intent.ACTION_SEND);
+                targetedShareIntent.setComponent(new ComponentName(packageName, app.activityInfo
+                    .name));
+                targetedShareIntent.setType(Constants.INTENT_TYPE);
+                targetedShareIntent.putExtra(Intent.EXTRA_TEXT, link);
+                targetedShareIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R
+                    .string.title_share));
+                targetedShareIntent.setPackage(packageName);
+                targetedShareIntents.add(targetedShareIntent);
+            }
+        }
+        Intent chooserIntent =
+            Intent.createChooser(targetedShareIntents.remove(0), getResources().getString(R
+                .string.title_share));
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,
+            targetedShareIntents.toArray(new Parcelable[]{}));
+        return chooserIntent;
     }
 }
