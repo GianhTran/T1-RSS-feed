@@ -27,4 +27,5 @@ public class Constants {
     public static final String KEY_ID = "mId";
     public static final String KEY_LINK_ITEM = "mLinkItem";
     public static final String KEY_CHANNEL = "mChannel";
+    public static final String KEY_VIEWED = "mViewed";
 }

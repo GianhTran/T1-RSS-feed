@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
+import com.example.framgia.t1_rss_feed.helper.EventListenerInterface;
 
 import io.realm.RealmList;
 import io.realm.RealmRecyclerViewAdapter;
@@ -20,13 +21,11 @@ import io.realm.RealmRecyclerViewAdapter;
 public class HomeAdapter extends RealmRecyclerViewAdapter<NewsItem, RecyclerView.ViewHolder> {
     private final int VIEW_TYPE_ITEM = 1;
     private final int VIEW_TYPE_LOAD_MORE = 2;
-    public OnItemNewsClickListener mOnItemNewClickListener;
-    private RealmList<NewsItem> mNews;
+    public EventListenerInterface.OnItemNewsClickListener mOnItemNewClickListener;
 
     public HomeAdapter(Context context, RealmList<NewsItem> news,
-                       OnItemNewsClickListener listener) {
+                       EventListenerInterface.OnItemNewsClickListener listener) {
         super(context, news, false);
-        this.mNews = news;
         this.mOnItemNewClickListener = listener;
     }
 

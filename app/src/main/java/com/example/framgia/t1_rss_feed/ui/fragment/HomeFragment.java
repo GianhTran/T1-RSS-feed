@@ -23,6 +23,7 @@ import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.News;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
 import com.example.framgia.t1_rss_feed.helper.EndlessRecyclerViewScrollListener;
+import com.example.framgia.t1_rss_feed.helper.EventListenerInterface;
 import com.example.framgia.t1_rss_feed.network.ApiInterface;
 import com.example.framgia.t1_rss_feed.network.ServiceGenerator;
 import com.example.framgia.t1_rss_feed.ui.adapter.HomeAdapter;
@@ -41,7 +42,7 @@ import retrofit2.Response;
  * Copyright @ 2016 Framgia inc
  * Created by GianhTNS on 23/08/2016.
  */
-public class HomeFragment extends BaseFragment implements HomeAdapter.OnItemNewsClickListener {
+public class HomeFragment extends BaseFragment implements EventListenerInterface.OnItemNewsClickListener {
     private SwipeRefreshLayout mSwipeRefreshHome;
     private RecyclerView mRecyclerViewHome;
     private HomeAdapter mHomeAdapter;
