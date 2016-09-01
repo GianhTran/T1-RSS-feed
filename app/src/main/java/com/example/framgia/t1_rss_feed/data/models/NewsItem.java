@@ -32,19 +32,19 @@ public class NewsItem extends RealmObject implements Parcelable {
     };
     @PrimaryKey
     private Long mId;
-    @Element(name = "guid")
+    @Element(name = "guid", required = false)
     private String mGuid;
-    @Element(name = "pubDate")
+    @Element(name = "pubDate", required = false)
     private String mPubDate;
-    @Element(name = "title")
+    @Element(name = "title", required = false)
     private String mTitle;
     @ElementList(entry = "category", inline = true, required = false)
     private RealmList<Category> mCategory;
-    @Element(name = "description")
+    @Element(name = "description", required = false)
     private String mDescription;
     @Element(name = "link", required = false)
     private String mLinkItem;
-    @Element(name = "enclosure")
+    @Element(name = "enclosure", required = false)
     private NewsEnclosure mEnclosure;
     @Element(name = "author", required = false)
     private String mAuthor;
@@ -52,6 +52,7 @@ public class NewsItem extends RealmObject implements Parcelable {
     private String mComments;
     private String mChannel;
     private Boolean mViewed;
+    private Long mIndex;
 
     public NewsItem() {
     }
@@ -71,6 +72,21 @@ public class NewsItem extends RealmObject implements Parcelable {
         RealmResults<NewsItem> newsItems =
             realm.where(NewsItem.class).findAllSorted(Constants.KEY_ID);
         return newsItems.isEmpty() ? 0 : newsItems.last().getId() + 1;
+    }
+
+    public long getNextIndex(Realm realm, String channel) {
+        RealmResults<NewsItem> newsItems = realm.where(NewsItem.class)
+            .equalTo(Constants.KEY_CHANNEL, channel)
+            .findAllSorted(Constants.KEY_ID);
+        return newsItems.isEmpty() ? 0 : newsItems.last().getIndex() + 1;
+    }
+
+    public long getIndex() {
+        return mIndex;
+    }
+
+    public void setIndex(long index) {
+        mIndex = index;
     }
 
     public Boolean getViewed() {

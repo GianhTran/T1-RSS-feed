@@ -8,11 +8,16 @@ public class Constants {
     public static final String TAG = "GianhTran";
     public static final int DEFAULT_DELAY = 2000;
     public static final int REALM_SCHEMA_VERSION = 0;
+    public static final int REALM_SCHEMA_VERSION_1 = 1;
     public static final Long CONNECT_TIME_OUT = 20000L;
     public static final Long READ_TIME_OUT = 20000L;
     public static final String INTENT_KEY_NEWS_ITEM = "intent_key_news_item";
     public static final String DATE_TIME_FORMAT = "yyyyMMdd_HHmmss";
     public static final String INTENT_KEY_NEWS_ITEM_ID = "intent_key_news_item_id";
+    public static final int TOP_POSITION = 1;
+    public static final int VALUE_ONE = 1;
+    public static final int NUMBER_OF_KEEP_DATE = -10;
+    public static final String FRAGMENT_TAG = "fragment_tag";
     // channel ID
     public static final int ASIAN_CHANNEL = 0;
     public static final int USA_CHANNEL = 1;
@@ -41,4 +46,7 @@ public class Constants {
     public static final String KEY_LINK_ITEM = "mLinkItem";
     public static final String KEY_CHANNEL = "mChannel";
     public static final String KEY_VIEWED = "mViewed";
+    public static final String KEY_INDEX = "mIndex";
+    // realm config
+    public static final String MY_REALM_NAME = "my_realm.realm";
 }

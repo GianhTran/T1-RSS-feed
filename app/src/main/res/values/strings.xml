@@ -12,6 +12,9 @@
     <string name="app_title">news online</string>
     <string name="menu_history">history</string>
     <string name="msg_read_more">click to readmore</string>
+    <string name="msg_update_error">oops ! can not update latest news, plz check your
+        connect!</string>
+    <string name="msg_has_news">we have news for you! </string>
     <string name="msg_export_pdf_error">opps! export PDF fail</string>
     <string name="msg_export_pdf_success">export PDF file success!</string>
     <string name="title_share">share title</string>

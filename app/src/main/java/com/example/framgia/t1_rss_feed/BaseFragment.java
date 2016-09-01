@@ -9,8 +9,24 @@ import android.app.Fragment;
 public class BaseFragment extends Fragment {
     protected void replaceFragment(int containerViewId, Fragment fragment) {
         getActivity().getFragmentManager().beginTransaction()
-            .addToBackStack(null)
+            .addToBackStack(Constants.FRAGMENT_TAG)
             .replace(containerViewId, fragment)
+            .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+            .commitAllowingStateLoss();
+    }
+
+    protected void addFragment(int containerViewId, Fragment fragment) {
+        getActivity().getFragmentManager().beginTransaction()
+            .addToBackStack(Constants.FRAGMENT_TAG)
+            .add(containerViewId, fragment)
+            .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+            .commitAllowingStateLoss();
+    }
+
+    protected void removeFragment(Fragment fragment) {
+        getActivity().getFragmentManager().beginTransaction()
+            .addToBackStack(Constants.FRAGMENT_TAG)
+            .remove(fragment)
             .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
             .commitAllowingStateLoss();
     }

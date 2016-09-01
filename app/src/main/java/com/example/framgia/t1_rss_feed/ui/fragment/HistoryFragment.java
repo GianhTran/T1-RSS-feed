@@ -80,7 +80,7 @@ public class HistoryFragment extends BaseFragment
     }
 
     @Override
-    public void onItemNewsClick(long itemid) {
+    public void onItemNewsClick(long itemId, int position) {
         //todo UPDATE LATER
     }
 }
