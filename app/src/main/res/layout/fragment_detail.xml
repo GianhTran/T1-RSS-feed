@@ -68,13 +68,13 @@
             android:layout_height="wrap_content">
 
             <com.example.framgia.t1_rss_feed.ui.view.FontIcon
-                android:id="@+id/font_viewed"
+                android:id="@+id/font_print"
                 style="@style/FontIconStyle"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_marginTop="@dimen/dimen_small"
-                android:text="@string/ic_view"/>
+                android:text="@string/ic_export"/>
 
             <com.example.framgia.t1_rss_feed.ui.view.FontIcon
                 android:id="@+id/font_share"
@@ -83,7 +83,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginTop="@dimen/dimen_small"
-                android:text="@string/ic_view"/>
+                android:text="@string/ic_share"/>
 
         </RelativeLayout>
 
