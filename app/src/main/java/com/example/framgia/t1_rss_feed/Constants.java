@@ -14,6 +14,8 @@ public class Constants {
     public static final String INTENT_KEY_NEWS_ITEM = "intent_key_news_item";
     public static final String DATE_TIME_FORMAT = "yyyyMMdd_HHmmss";
     public static final String INTENT_KEY_NEWS_ITEM_ID = "intent_key_news_item_id";
+    public static final int SERVICE_REQUEST_CODE = 0;
+    public static final int SERVICE_FLAG = 0;
     public static final int TOP_POSITION = 1;
     public static final int VALUE_ONE = 1;
     public static final int NUMBER_OF_KEEP_DATE = -10;
