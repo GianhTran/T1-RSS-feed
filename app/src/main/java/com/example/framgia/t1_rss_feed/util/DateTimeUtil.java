@@ -10,13 +10,14 @@ import java.util.Locale;
  * Created by GianhTNS on 29/08/2016.
  */
 public class DateTimeUtil {
-    private static final String DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String DEFAULT_FORMAT = "EEE, d MMM yyyy HH:mm:ss Z";
+    private static final long DEFAULT_LONG_VALUE = 0L;
 
     /**
      * string to date format
      *
      * @param date: string input
-     * @return
+     * @return Date value of input : EEE, d MMM yyyy HH:mm:ss Z
      * @throws ParseException
      */
     public static Date formatStringToDate(String date) throws ParseException {
@@ -28,11 +29,25 @@ public class DateTimeUtil {
      *
      * @param date1
      * @param date2
-     * @return
+     * @return if (date1 > date2) return > 0 else return < 0
      * @throws ParseException
      */
-    public static Long compareDate(String date1, String date2) throws ParseException {
+    public static Long compareDate(String date1, String date2) {
         final SimpleDateFormat format = new SimpleDateFormat(DEFAULT_FORMAT, Locale.getDefault());
-        return format.parse(date1).getTime() - format.parse(date2).getTime();
+        try {
+            return format.parse(date1).getTime() - format.parse(date2).getTime();
+        } catch (ParseException e) {
+            return DEFAULT_LONG_VALUE;
+        }
+    }
+
+    /**
+     * date to string format
+     *
+     * @param date : Date value input
+     * @return string value of input :  "EEE, d MMM yyyy HH:mm:ss Z"
+     */
+    public static String formatDateToString(Date date) {
+        return new SimpleDateFormat(DEFAULT_FORMAT, Locale.getDefault()).format(date);
     }
 }

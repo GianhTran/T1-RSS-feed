@@ -9,6 +9,6 @@ public class EventListenerInterface {
      * handler item click listener
      */
     public interface OnItemNewsClickListener {
-        void onItemNewsClick(long itemId);
+        void onItemNewsClick(long itemId, int position);
     }
 }

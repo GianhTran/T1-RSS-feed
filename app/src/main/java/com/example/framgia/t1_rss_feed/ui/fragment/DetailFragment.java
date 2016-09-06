@@ -199,8 +199,9 @@ public class DetailFragment extends BaseFragment {
         protected TempNews doInBackground(Void... voids) {
             try {
                 mRealm = Realm.getInstance(new RealmConfiguration.Builder(getActivity()).build());
-                NewsItem newsItem = mRealm.where(NewsItem.class).equalTo(Constants.KEY_ID, mId)
-                    .findFirst();
+                final NewsItem newsItem =
+                    mRealm.where(NewsItem.class).equalTo(Constants.KEY_ID, mId)
+                        .findFirst();
                 TempNews tempNews = new TempNews();
                 tempNews.setTitle(newsItem.getTitle());
                 tempNews.setAuthor(newsItem.getAuthor());
@@ -210,13 +211,15 @@ public class DetailFragment extends BaseFragment {
                 tempNews.setLinkItem(newsItem.getLink());
                 return tempNews;
             } finally {
-                mRealm.close();
+                if (mRealm != null)
+                    mRealm.close();
             }
         }
 
         @Override
         protected void onPostExecute(TempNews newsItem) {
             super.onPostExecute(newsItem);
+            updateData(mId);
             mTvTitleDetail.setText(newsItem.getTitle());
             mTvContentDetail.setText(newsItem.getDescription());
             mTvAuthor.setText(newsItem.getAuthor());
@@ -271,4 +274,25 @@ public class DetailFragment extends BaseFragment {
             targetedShareIntents.toArray(new Parcelable[]{}));
         return chooserIntent;
     }
+
+    /**
+     * method using to update value of viewed = true by id
+     *
+     * @param id of news
+     */
+    private void updateData(long id) {
+        Realm realm = Realm.getInstance(new RealmConfiguration.Builder(getActivity()).build());
+        final NewsItem newsItem =
+            realm.where(NewsItem.class).equalTo(Constants.KEY_ID, id)
+                .findFirst();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                newsItem.setViewed(true);
+                realm.copyToRealmOrUpdate(newsItem);
+            }
+        });
+        realm.close();
+    }
+
 }

@@ -32,12 +32,34 @@
         android:singleLine="true"
         android:textSize="@dimen/text_size_medium"/>
 
-    <TextView
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/msg_read_more"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="@dimen/text_size_small"
-        android:textStyle="italic"/>
+        android:layout_height="match_parent">
+
+        <com.example.framgia.t1_rss_feed.ui.view.FontIcon
+            android:id="@+id/font_home_viewed"
+            style="@style/FontIconStyle"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="@dimen/dimen_small"
+            android:text="@string/ic_view"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:layout_toEndOf="@id/font_home_viewed"
+            android:layout_toRightOf="@id/font_home_viewed"
+            android:paddingLeft="@dimen/dimen_medium"
+            android:paddingRight="@dimen/dimen_medium"
+            android:paddingStart="@dimen/dimen_medium"
+            android:text="@string/msg_read_more"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/text_size_small"
+            android:textStyle="italic"/>
+    </RelativeLayout>
+
 
 </LinearLayout>

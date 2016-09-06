@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
  */
 public class Preferences {
     private static final String PRE_LOAD = "preLoad";
+    private static final String PRE_CHANNEL = "channel";
     private static final String PREFS_NAME = "prefs";
     private static Preferences sInstance;
     private final SharedPreferences SHARE_PREFERENCES;
@@ -25,14 +26,23 @@ public class Preferences {
         return sInstance;
     }
 
-    public boolean getPreLoad() {
-        return SHARE_PREFERENCES.getBoolean(PRE_LOAD, false);
+    public int getPreLoad() {
+        return SHARE_PREFERENCES.getInt(PRE_LOAD, 0);
     }
 
-    public void setPreLoad(boolean totalTime) {
-        SHARE_PREFERENCES
-            .edit()
-            .putBoolean(PRE_LOAD, totalTime)
+    public void setPreLoad(int preLoad) {
+        SHARE_PREFERENCES.edit()
+            .putInt(PRE_LOAD, preLoad)
             .apply();
+    }
+
+    public void setChannel(int channelId) {
+        SHARE_PREFERENCES.edit()
+            .putInt(PRE_CHANNEL, channelId)
+            .apply();
+    }
+
+    public int getChannel() {
+        return SHARE_PREFERENCES.getInt(PRE_CHANNEL, 0);
     }
 }

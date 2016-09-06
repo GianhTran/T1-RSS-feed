@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,9 +17,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.framgia.t1_rss_feed.BaseFragment;
 import com.example.framgia.t1_rss_feed.Constants;
+import com.example.framgia.t1_rss_feed.Preferences;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.News;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
@@ -34,6 +37,7 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmList;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -42,7 +46,8 @@ import retrofit2.Response;
  * Copyright @ 2016 Framgia inc
  * Created by GianhTNS on 23/08/2016.
  */
-public class HomeFragment extends BaseFragment implements EventListenerInterface.OnItemNewsClickListener {
+public class HomeFragment extends BaseFragment
+    implements EventListenerInterface.OnItemNewsClickListener {
     private SwipeRefreshLayout mSwipeRefreshHome;
     private RecyclerView mRecyclerViewHome;
     private HomeAdapter mHomeAdapter;
@@ -51,9 +56,17 @@ public class HomeFragment extends BaseFragment implements EventListenerInterface
     private int mChannelId = Constants.ASIAN_CHANNEL;
     private TextView mTvDataEmpty;
     private Realm mRealm;
+    private FloatingActionButton mFloatingActionHome;
+    private Boolean mIsLoadMore = true;
+    private int mPage;
 
     public static HomeFragment newInstance() {
         return new HomeFragment();
+    }
+
+    @Override
+    public void setRetainInstance(boolean retain) {
+        super.setRetainInstance(retain);
     }
 
     @Nullable
@@ -62,6 +75,7 @@ public class HomeFragment extends BaseFragment implements EventListenerInterface
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mRealm = Realm.getDefaultInstance();
+        mPage = 1;
         initToolbar();
         initView(view);
         handleEvent();
@@ -81,6 +95,8 @@ public class HomeFragment extends BaseFragment implements EventListenerInterface
         mRecyclerViewHome = (RecyclerView) view.findViewById(R.id.recycler_home);
         mSpinnerChannel = (Spinner) view.findViewById(R.id.spinner_channel);
         mTvDataEmpty = (TextView) view.findViewById(R.id.text_no_data);
+        mFloatingActionHome = (FloatingActionButton) view.findViewById(R.id.fab_home);
+        mSpinnerChannel.setSelection(Preferences.with(getActivity()).getChannel());
     }
 
     private void handleEvent() {
@@ -88,11 +104,18 @@ public class HomeFragment extends BaseFragment implements EventListenerInterface
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int id, long l) {
                 mChannelId = id;
+                Preferences.with(getActivity()).setChannel(mChannelId);
                 reloadData();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+        mFloatingActionHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRecyclerViewHome.scrollToPosition(Constants.TOP_POSITION);
             }
         });
     }
@@ -101,6 +124,7 @@ public class HomeFragment extends BaseFragment implements EventListenerInterface
         mSwipeRefreshHome.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                resetSavedPosition();
                 reloadData();
                 showLoading(false);
             }
@@ -111,7 +135,7 @@ public class HomeFragment extends BaseFragment implements EventListenerInterface
      * method using to reload data
      */
     private void reloadData() {
-        mHomeAdapter.clearData();
+        mPage = 1;
         loadData();
     }
 
@@ -124,14 +148,8 @@ public class HomeFragment extends BaseFragment implements EventListenerInterface
         mRecyclerViewHome.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                // delay 5s before start load more
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //todo load more event
-                    }
-                }, Constants.DEFAULT_DELAY);
+                if (mIsLoadMore)
+                    updateData(getChannelName(), page);
             }
         });
     }
@@ -200,7 +218,10 @@ public class HomeFragment extends BaseFragment implements EventListenerInterface
 
             @Override
             public void onFailure(Call<News> call, Throwable t) {
-                showEmpty(true);
+                Toast.makeText(getActivity(),
+                    getActivity().getResources().getText(R.string.msg_update_error),
+                    Toast.LENGTH_SHORT).show();
+                updateData(getChannelName(), Constants.VALUE_ONE);
             }
         });
     }
@@ -220,7 +241,8 @@ public class HomeFragment extends BaseFragment implements EventListenerInterface
     }
 
     @Override
-    public void onItemNewsClick(long itemId) {
+    public void onItemNewsClick(long itemId, int position) {
+        Preferences.with(getActivity()).setPreLoad(position);
         replaceFragment(R.id.frame_container, DetailFragment.newInstance(itemId));
     }
 
@@ -251,20 +273,36 @@ public class HomeFragment extends BaseFragment implements EventListenerInterface
     }
 
     /**
-     * async method using to load list 20 items form data base
+     * method using update data
+     *
+     * @param channel chanel of news ex: asian
+     * @param page    pager index
      */
-    private void updateData(final String channel) {
-        mHomeAdapter.updateData(mRealm.where(NewsItem.class).equalTo
-            (Constants.KEY_CHANNEL, channel).findAllSorted(Constants.KEY_ID));
+    private void updateData(final String channel, int page) {
+        long firstIndex = mRealm.where(NewsItem.class).equalTo
+            (Constants.KEY_CHANNEL, channel)
+            .findAll().last().getIndex();
+        long lastIndex = mRealm.where(NewsItem.class).equalTo
+            (Constants.KEY_CHANNEL, channel)
+            .findAll().first().getIndex();
+        long secondIndex = firstIndex - (page * 20) + 1;
+        mIsLoadMore = secondIndex > lastIndex;
+        RealmResults<NewsItem> results = mRealm.where(NewsItem.class)
+            .equalTo(Constants.KEY_CHANNEL, channel)
+            .between(Constants.KEY_INDEX, (mIsLoadMore) ? secondIndex : lastIndex, firstIndex)
+            .findAll();
+        mHomeAdapter.updateData(results);
         showLoading(false);
+        mRecyclerViewHome.scrollToPosition(Preferences.with(getActivity()).getPreLoad());
     }
 
     /**
      * asyncTask using to save list News update from server, ignore news which saved
      */
-    private class SaveDataAsyncTask extends AsyncTask<Void, Void, Void> {
+    private class SaveDataAsyncTask extends AsyncTask<Void, Void, Boolean> {
         private List<NewsItem> mItems = new ArrayList<>();
         private String mChannel;
+        private Boolean mHasNews = false;
 
         public SaveDataAsyncTask(List<NewsItem> itemList, String channel) {
             super();
@@ -273,30 +311,48 @@ public class HomeFragment extends BaseFragment implements EventListenerInterface
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Boolean doInBackground(Void... voids) {
             Realm realm = Realm.getDefaultInstance();
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
+                    if (mItems == null)
+                        return;
                     for (NewsItem itemNew : mItems) {
                         if (realm.where(NewsItem.class).equalTo
-                            (Constants.KEY_LINK_ITEM, itemNew.getLink()).findAll().size() == 0) {
-                            itemNew.setId(itemNew.getNextPrimaryKey(realm));
-                            itemNew.setChannel(mChannel);
-                            itemNew.setViewed(false);
-                            realm.copyToRealm(itemNew);
-                        }
+                            (Constants.KEY_LINK_ITEM,
+                                itemNew.getLink()).findAll().size() != 0)
+                            continue;
+                        itemNew.setId(itemNew.getNextPrimaryKey(realm));
+                        itemNew.setChannel(mChannel);
+                        itemNew.setIndex(itemNew.getNextIndex(realm, mChannel));
+                        itemNew.setViewed(false);
+                        realm.copyToRealm(itemNew);
+                        mHasNews = true;
                     }
                 }
             });
             realm.close();
-            return null;
+            return mHasNews;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            updateData(mChannel);
+        protected void onPostExecute(Boolean hasNew) {
+            super.onPostExecute(hasNew);
+            updateData(mChannel, Constants.VALUE_ONE);
+            if (!hasNew) return;
+            Toast.makeText(getActivity(),
+                getActivity().getResources().getText(R.string.msg_has_news),
+                Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void resetSavedPosition() {
+        Preferences.with(getActivity()).setPreLoad(Constants.TOP_POSITION);
+    }
+
+    private String getChannelName() {
+        return (getActivity().getResources().getTextArray(R.array
+            .channel_arrays))[mChannelId].toString();
     }
 }
