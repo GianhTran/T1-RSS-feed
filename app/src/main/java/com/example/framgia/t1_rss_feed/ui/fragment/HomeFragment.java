@@ -10,8 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -38,6 +38,7 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
+import io.realm.Sort;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -58,7 +59,6 @@ public class HomeFragment extends BaseFragment
     private Realm mRealm;
     private FloatingActionButton mFloatingActionHome;
     private Boolean mIsLoadMore = true;
-    private int mPage;
 
     public static HomeFragment newInstance() {
         return new HomeFragment();
@@ -75,7 +75,6 @@ public class HomeFragment extends BaseFragment
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mRealm = Realm.getDefaultInstance();
-        mPage = 1;
         initToolbar();
         initView(view);
         handleEvent();
@@ -135,7 +134,6 @@ public class HomeFragment extends BaseFragment
      * method using to reload data
      */
     private void reloadData() {
-        mPage = 1;
         loadData();
     }
 
@@ -149,7 +147,7 @@ public class HomeFragment extends BaseFragment
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
                 if (mIsLoadMore)
-                    updateData(getChannelName(), page);
+                    updateData(getChannelName(), page + 1);
             }
         });
     }
@@ -167,6 +165,7 @@ public class HomeFragment extends BaseFragment
     }
 
     private void loadData() {
+        clearList();
         showEmpty(false);
         showLoading(true);
         ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class);
@@ -219,7 +218,7 @@ public class HomeFragment extends BaseFragment
             @Override
             public void onFailure(Call<News> call, Throwable t) {
                 Toast.makeText(getActivity(),
-                    getActivity().getResources().getText(R.string.msg_update_error),
+                    R.string.msg_update_error,
                     Toast.LENGTH_SHORT).show();
                 updateData(getChannelName(), Constants.VALUE_ONE);
             }
@@ -227,23 +226,9 @@ public class HomeFragment extends BaseFragment
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.home:
-            case R.id.action_history:
-                //todo update history
-                break;
-            case R.id.action_settings:
-                //todo update settings
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onItemNewsClick(long itemId, int position) {
         Preferences.with(getActivity()).setPreLoad(position);
-        replaceFragment(R.id.frame_container, DetailFragment.newInstance(itemId));
+        replaceFragment(R.id.frame_container, DetailFragment.newInstance(itemId, true));
     }
 
     private void initToolbar() {
@@ -279,21 +264,34 @@ public class HomeFragment extends BaseFragment
      * @param page    pager index
      */
     private void updateData(final String channel, int page) {
-        long firstIndex = mRealm.where(NewsItem.class).equalTo
-            (Constants.KEY_CHANNEL, channel)
-            .findAll().last().getIndex();
-        long lastIndex = mRealm.where(NewsItem.class).equalTo
-            (Constants.KEY_CHANNEL, channel)
-            .findAll().first().getIndex();
-        long secondIndex = firstIndex - (page * 20) + 1;
-        mIsLoadMore = secondIndex > lastIndex;
         RealmResults<NewsItem> results = mRealm.where(NewsItem.class)
             .equalTo(Constants.KEY_CHANNEL, channel)
+            .findAllSorted(Constants.KEY_INDEX, Sort.ASCENDING);
+        for (NewsItem item : results) {
+        }
+        if (results.isEmpty()) {
+            showLoading(false);
+            return;
+        }
+        long firstIndex = results.last().getIndex();
+        long lastIndex = results.first().getIndex();
+        long secondIndex = firstIndex - (page * 20) + 1;
+        mIsLoadMore = secondIndex > lastIndex;
+        mHomeAdapter.updateData(mRealm.where(NewsItem.class)
+            .equalTo(Constants.KEY_CHANNEL, channel)
             .between(Constants.KEY_INDEX, (mIsLoadMore) ? secondIndex : lastIndex, firstIndex)
-            .findAll();
-        mHomeAdapter.updateData(results);
+            .findAll());
         showLoading(false);
-        mRecyclerViewHome.scrollToPosition(Preferences.with(getActivity()).getPreLoad());
+        mRecyclerViewHome.smoothScrollToPosition(Preferences.with(getActivity()).getPreLoad());
+    }
+
+    private void resetSavedPosition() {
+        Preferences.with(getActivity()).setPreLoad(Constants.TOP_POSITION);
+    }
+
+    private String getChannelName() {
+        return (getActivity().getResources().getTextArray(R.array
+            .channel_arrays))[mChannelId].toString();
     }
 
     /**
@@ -318,15 +316,19 @@ public class HomeFragment extends BaseFragment
                 public void execute(Realm realm) {
                     if (mItems == null)
                         return;
+                    // we don not need check condition pub day > 10, because of rss always return
+                    // pub day <=3
                     for (NewsItem itemNew : mItems) {
-                        if (realm.where(NewsItem.class).equalTo
-                            (Constants.KEY_LINK_ITEM,
-                                itemNew.getLink()).findAll().size() != 0)
+                        if (realm.where(NewsItem.class).equalTo(Constants.KEY_LINK_ITEM,
+                            itemNew.getLink())
+                            .findAll().size() != 0)
                             continue;
                         itemNew.setId(itemNew.getNextPrimaryKey(realm));
                         itemNew.setChannel(mChannel);
                         itemNew.setIndex(itemNew.getNextIndex(realm, mChannel));
                         itemNew.setViewed(false);
+                        itemNew.setReadTime(Constants.LONG_ZERO_VALUE);
+                        itemNew.setHistoryIndex(Constants.DEF_HISTOTY_INDEX_VALUE);
                         realm.copyToRealm(itemNew);
                         mHasNews = true;
                     }
@@ -342,17 +344,18 @@ public class HomeFragment extends BaseFragment
             updateData(mChannel, Constants.VALUE_ONE);
             if (!hasNew) return;
             Toast.makeText(getActivity(),
-                getActivity().getResources().getText(R.string.msg_has_news),
+                R.string.msg_has_news,
                 Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void resetSavedPosition() {
-        Preferences.with(getActivity()).setPreLoad(Constants.TOP_POSITION);
-    }
-
-    private String getChannelName() {
-        return (getActivity().getResources().getTextArray(R.array
-            .channel_arrays))[mChannelId].toString();
+    /**
+     * this method using clear all data of recycler view
+     * because realm adapter have no method clear data
+     * so we need update by blank list data
+     */
+    private void clearList() {
+        if (mHomeAdapter != null)
+            mHomeAdapter.updateData(new RealmList<NewsItem>());
     }
 }
