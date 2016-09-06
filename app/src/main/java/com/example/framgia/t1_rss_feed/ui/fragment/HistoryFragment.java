@@ -13,11 +13,14 @@ import com.example.framgia.t1_rss_feed.BaseFragment;
 import com.example.framgia.t1_rss_feed.Constants;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
+import com.example.framgia.t1_rss_feed.helper.EndlessRecyclerViewScrollListener;
 import com.example.framgia.t1_rss_feed.helper.EventListenerInterface;
 import com.example.framgia.t1_rss_feed.ui.adapter.HistoryAdapter;
 import com.example.framgia.t1_rss_feed.ui.view.DividerItemDecoration;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
+import io.realm.Sort;
 
 /**
  * Copyright @ 2016 Framgia inc
@@ -25,53 +28,80 @@ import io.realm.Realm;
  */
 public class HistoryFragment extends BaseFragment
     implements EventListenerInterface.OnItemNewsClickListener {
-    private Realm mRealm;
     private RecyclerView mRecyclerViewHistory;
     private ProgressBar mProgressBarHistory;
     private HistoryAdapter mAdapter;
+    private Boolean mIsLoadMore = true;
+    private Realm mRealm;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_history, container, false);
-        //get realm instance
-        this.mRealm = Realm.getDefaultInstance();
         initView(view);
         initRecyclerView();
         return view;
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onDestroy() {
+        super.onDestroy();
+        mRealm.close();
     }
 
     private void initRecyclerView() {
         mAdapter = new HistoryAdapter(getActivity(),
-            mRealm.where(NewsItem.class).equalTo(Constants.KEY_VIEWED, true)
-                .findAllSorted(Constants.KEY_ID),
+            getResultByPage(Constants.FIRST_PAGE),
             this);
-        mRecyclerViewHistory.setLayoutManager(new LinearLayoutManager(getActivity()));
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerViewHistory.setLayoutManager(layoutManager);
         mRecyclerViewHistory.setAdapter(mAdapter);
         mRecyclerViewHistory.setHasFixedSize(true);
         mRecyclerViewHistory.addItemDecoration(
             new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        showLoading(false);
+        mRecyclerViewHistory
+            .addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
+                @Override
+                public void onLoadMore(int page, int totalItemsCount) {
+                    if (!mIsLoadMore) return;
+                    mAdapter.updateData(getResultByPage(page + 1));
+                }
+            });
+    }
+
+    /**
+     * this method using load data by paging, (20 item / page)
+     *
+     * @param page page number
+     * @return list of items
+     */
+    private RealmResults<NewsItem> getResultByPage(int page) {
+        RealmResults<NewsItem> results = mRealm.where(NewsItem.class)
+            .equalTo(Constants.KEY_VIEWED, true)
+            .findAllSorted(Constants.KEY_HISTORY_INDEX, Sort.ASCENDING);
+        if (results.isEmpty()) return null;
+        long firstIndex = results.last().getHistoryIndex();
+        long lastIndex = results.first().getHistoryIndex();
+        long secondIndex = firstIndex - (page * Constants.ITEMS_PER_PAGE) + 1;
+        mIsLoadMore = secondIndex > lastIndex;
+        return mRealm.where(NewsItem.class)
+            .equalTo(Constants.KEY_VIEWED, true)
+            .between(Constants.KEY_HISTORY_INDEX,
+                (mIsLoadMore) ? secondIndex : lastIndex,
+                firstIndex)
+            .findAllSorted(Constants.KEY_HISTORY_INDEX, Sort.DESCENDING);
     }
 
     private void initView(View view) {
+        mRealm = Realm.getDefaultInstance();
         mRecyclerViewHistory = (RecyclerView) view.findViewById(R.id.recycler_history);
         mProgressBarHistory = (ProgressBar) view.findViewById(R.id.progress_bar_history);
     }
 
     private void showLoading(Boolean isLoading) {
         mProgressBarHistory.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mRealm.close();
     }
 
     public static HistoryFragment newInstance() {
@@ -81,6 +111,6 @@ public class HistoryFragment extends BaseFragment
 
     @Override
     public void onItemNewsClick(long itemId, int position) {
-        //todo UPDATE LATER
+        addFragment(R.id.frame_container_history, DetailFragment.newInstance(itemId, false));
     }
 }

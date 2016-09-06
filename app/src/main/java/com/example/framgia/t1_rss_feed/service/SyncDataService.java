@@ -1,18 +1,23 @@
 package com.example.framgia.t1_rss_feed.service;
 
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.example.framgia.t1_rss_feed.Constants;
+import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.News;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
 import com.example.framgia.t1_rss_feed.network.ApiInterface;
 import com.example.framgia.t1_rss_feed.network.ServiceGenerator;
+import com.example.framgia.t1_rss_feed.ui.activity.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,9 +85,10 @@ public class SyncDataService extends Service {
     /**
      * asyncTask using to save list News update from server, ignore news which saved
      */
-    private class SaveDataAsyncTask extends AsyncTask<Void, Void, Void> {
+    private class SaveDataAsyncTask extends AsyncTask<Void, Void, Boolean> {
         private List<NewsItem> mItems = new ArrayList<>();
         private String mChannel;
+        private Boolean mHasNew = false;
 
         public SaveDataAsyncTask(List<NewsItem> itemList, String channel) {
             super();
@@ -91,30 +97,56 @@ public class SyncDataService extends Service {
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Boolean doInBackground(Void... voids) {
             Realm realm = Realm.getDefaultInstance();
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
                     for (NewsItem itemNew : mItems) {
                         if (realm.where(NewsItem.class).equalTo
-                            (Constants.KEY_LINK_ITEM, itemNew.getLink()).findAll().size() == 0) {
-                            itemNew.setId(itemNew.getNextPrimaryKey(realm));
-                            itemNew.setChannel(mChannel);
-                            itemNew.setViewed(false);
-                            realm.copyToRealm(itemNew);
-                        }
+                            (Constants.KEY_LINK_ITEM, itemNew.getLink()).findAll().size() != 0)
+                            continue;
+                        itemNew.setId(itemNew.getNextPrimaryKey(realm));
+                        itemNew.setChannel(mChannel);
+                        itemNew.setViewed(false);
+                        itemNew.setIndex(itemNew.getNextIndex(realm, mChannel));
+                        itemNew.setReadTime(Constants.LONG_ZERO_VALUE);
+                        realm.copyToRealm(itemNew);
+                        mHasNew = true;
                     }
                 }
             });
             realm.close();
-            return null;
+            return mHasNew;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(Boolean hasNew) {
+            super.onPostExecute(hasNew);
+            if (hasNew) showNotification();
             stopSelf();
         }
+    }
+
+    /**
+     * method using to push notification when have new items
+     */
+    private void showNotification() {
+        String notificationTitle = getResources().getString(R.string.app_name);
+        String notificationText = getResources().getString(R.string.msg_has_news);
+        Intent myIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getBaseContext(),
+            0,
+            myIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification.Builder builder = new Notification.Builder(this)
+            .setContentTitle(notificationTitle)
+            .setContentText(notificationText).setSmallIcon(R.drawable.ic_logo)
+            .setContentIntent(pendingIntent);
+        NotificationManager notificationManager =
+            (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(0,
+            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) ? builder.build()
+                : builder.getNotification());
     }
 }
