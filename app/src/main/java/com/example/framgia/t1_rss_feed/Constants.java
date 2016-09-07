@@ -16,10 +16,16 @@ public class Constants {
     public static final String INTENT_KEY_NEWS_ITEM_ID = "intent_key_news_item_id";
     public static final int SERVICE_REQUEST_CODE = 0;
     public static final int SERVICE_FLAG = 0;
-    public static final int TOP_POSITION = 1;
+    public static final int TOP_POSITION = 0;
     public static final int VALUE_ONE = 1;
     public static final int NUMBER_OF_KEEP_DATE = -10;
     public static final String FRAGMENT_TAG = "fragment_tag";
+    public static final String INTENT_KEY_CALL_FROM_HOME = "intent_key_call_from_home";
+    public static final int FIRST_PAGE = 1;
+    public static final int ITEMS_PER_PAGE = 20;
+    public static final Long LONG_ZERO_VALUE = 0L;
+    public static final Long DEF_HISTOTY_INDEX_VALUE = -1L;
+    public static final String INTENT_OPEN_PDF_TYPE = "application/pdf";
     // channel ID
     public static final int ASIAN_CHANNEL = 0;
     public static final int USA_CHANNEL = 1;
@@ -49,6 +55,8 @@ public class Constants {
     public static final String KEY_CHANNEL = "mChannel";
     public static final String KEY_VIEWED = "mViewed";
     public static final String KEY_INDEX = "mIndex";
+    public static final String KEY_READ_TIME = "mReadTime";
+    public static final String KEY_HISTORY_INDEX = "mHistoryIndex";
     // realm config
     public static final String MY_REALM_NAME = "my_realm.realm";
 }

@@ -12,6 +12,7 @@ import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
+import io.realm.Sort;
 import io.realm.annotations.PrimaryKey;
 
 /**
@@ -52,7 +53,10 @@ public class NewsItem extends RealmObject implements Parcelable {
     private String mComments;
     private String mChannel;
     private Boolean mViewed;
+    // realm list object can not using as java list, so need to create values below
     private Long mIndex;
+    private Long mReadTime;
+    private Long mHistoryIndex;
 
     public NewsItem() {
     }
@@ -77,12 +81,35 @@ public class NewsItem extends RealmObject implements Parcelable {
     public long getNextIndex(Realm realm, String channel) {
         RealmResults<NewsItem> newsItems = realm.where(NewsItem.class)
             .equalTo(Constants.KEY_CHANNEL, channel)
-            .findAllSorted(Constants.KEY_ID);
+            .findAllSorted(Constants.KEY_INDEX);
         return newsItems.isEmpty() ? 0 : newsItems.last().getIndex() + 1;
+    }
+
+    public long getNextHistoryIndex(Realm realm) {
+        RealmResults<NewsItem> newsItems = realm.where(NewsItem.class)
+            .equalTo(Constants.KEY_VIEWED, true)
+            .findAllSorted(Constants.KEY_HISTORY_INDEX, Sort.ASCENDING);
+        return newsItems.isEmpty() ? 0 : newsItems.last().getHistoryIndex() + 1;
+    }
+
+    public Long getReadTime() {
+        return mReadTime;
+    }
+
+    public void setReadTime(Long readTime) {
+        mReadTime = readTime;
     }
 
     public long getIndex() {
         return mIndex;
+    }
+
+    public Long getHistoryIndex() {
+        return mHistoryIndex;
+    }
+
+    public void setHistoryIndex(Long historyIndex) {
+        mHistoryIndex = historyIndex;
     }
 
     public void setIndex(long index) {

@@ -1,5 +1,7 @@
 package com.example.framgia.t1_rss_feed.ui.activity;
 
+import android.app.Fragment;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,6 +12,7 @@ import com.example.framgia.t1_rss_feed.BaseActivity;
 import com.example.framgia.t1_rss_feed.Constants;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
+import com.example.framgia.t1_rss_feed.ui.fragment.DetailFragment;
 import com.example.framgia.t1_rss_feed.ui.fragment.HomeFragment;
 import com.example.framgia.t1_rss_feed.util.DateTimeUtil;
 
@@ -41,10 +44,7 @@ public class MainActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_history:
-                Toast.makeText(MainActivity.this, "history App", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.action_settings:
-                Toast.makeText(MainActivity.this, "settings App", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, HistoryActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -52,11 +52,12 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (getFragmentManager().getBackStackEntryCount() > 0) {
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_container);
+        if (fragment instanceof DetailFragment) {
             getFragmentManager().popBackStack();
-        } else {
-            super.onBackPressed();
+            return;
         }
+        super.onBackPressed();
     }
 
     private void notifyData() {

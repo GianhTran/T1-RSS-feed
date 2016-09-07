@@ -1,10 +1,12 @@
 package com.example.framgia.t1_rss_feed.ui.fragment;
 
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -43,7 +45,6 @@ import java.util.Date;
 import java.util.List;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 /**
  * Copyright @ 2016 Framgia inc
@@ -62,11 +63,13 @@ public class DetailFragment extends BaseFragment {
     private String mShareLink = null;
     private DetailFragment mDetailFragment;
     private ProgressBar mProgressBarDetail;
+    private Boolean mIsHomeDetail;
 
-    public static DetailFragment newInstance(long itemId) {
+    public static DetailFragment newInstance(long itemId, boolean isCallFromHome) {
         DetailFragment detailFragment = new DetailFragment();
         Bundle args = new Bundle();
         args.putLong(Constants.INTENT_KEY_NEWS_ITEM_ID, itemId);
+        args.putBoolean(Constants.INTENT_KEY_CALL_FROM_HOME, isCallFromHome);
         detailFragment.setArguments(args);
         return detailFragment;
     }
@@ -77,7 +80,8 @@ public class DetailFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         mDetailFragment = this;
-        initToolbar();
+        mIsHomeDetail = getArguments().getBoolean(Constants.INTENT_KEY_CALL_FROM_HOME);
+        if (mIsHomeDetail) initToolbar();
         initView(view);
         handleEvent();
         new LoadNewsDetailAsyncTask(getArguments().getLong(Constants.INTENT_KEY_NEWS_ITEM_ID))
@@ -101,8 +105,14 @@ public class DetailFragment extends BaseFragment {
         mFontIconShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mShareLink != null)
-                    startActivity(getIntentShare(getActivity(), mShareLink));
+                if (mShareLink == null) return;
+                Intent intent = getIntentShare(getActivity(), mShareLink);
+                if (intent == null) {
+                    Toast.makeText(getActivity(), R.string.msg_install_app, Toast.LENGTH_SHORT)
+                        .show();
+                    return;
+                }
+                startActivity(getIntentShare(getActivity(), mShareLink));
             }
         });
         mFontIconPrint.setOnClickListener(new View.OnClickListener() {
@@ -135,6 +145,7 @@ public class DetailFragment extends BaseFragment {
         private String mTitle;
         private String mContent;
         private String mAuthor;
+        private String mName;
 
         public CreatePdfAsyncTask(String author, String content, String title) {
             super();
@@ -148,8 +159,8 @@ public class DetailFragment extends BaseFragment {
             //Using time to make file name
             Date date = new Date();
             String timeStamp = new SimpleDateFormat(Constants.DATE_TIME_FORMAT).format(date);
-            File myFile = new File(getActivity().getExternalFilesDir(Constants.FILE_PATH),
-                Constants.PDF_TITLE + timeStamp + Constants.PDF_TYPE);
+            mName = Constants.PDF_TITLE + timeStamp + Constants.PDF_TYPE;
+            File myFile = new File(getActivity().getExternalFilesDir(Constants.FILE_PATH), mName);
             OutputStream output;
             try {
                 output = new FileOutputStream(myFile);
@@ -163,7 +174,7 @@ public class DetailFragment extends BaseFragment {
                 //Close the document
                 document.close();
                 output.close();
-                return getResources().getText(R.string.msg_export_pdf_success).toString();
+                return getResources().getText(R.string.msg_export_pdf_success).toString() + mName;
             } catch (DocumentException | IOException error) {
                 return getResources().getText(R.string.msg_export_pdf_error).toString();
             }
@@ -175,6 +186,7 @@ public class DetailFragment extends BaseFragment {
             Toast.makeText(getActivity(),
                 msg,
                 Toast.LENGTH_SHORT).show();
+            viewFilePdf(mName);
         }
     }
 
@@ -198,10 +210,11 @@ public class DetailFragment extends BaseFragment {
         @Override
         protected TempNews doInBackground(Void... voids) {
             try {
-                mRealm = Realm.getInstance(new RealmConfiguration.Builder(getActivity()).build());
-                final NewsItem newsItem =
-                    mRealm.where(NewsItem.class).equalTo(Constants.KEY_ID, mId)
-                        .findFirst();
+                mRealm = Realm.getDefaultInstance();
+                final NewsItem newsItem = mRealm
+                    .where(NewsItem.class)
+                    .equalTo(Constants.KEY_ID, mId)
+                    .findFirst();
                 TempNews tempNews = new TempNews();
                 tempNews.setTitle(newsItem.getTitle());
                 tempNews.setAuthor(newsItem.getAuthor());
@@ -219,15 +232,16 @@ public class DetailFragment extends BaseFragment {
         @Override
         protected void onPostExecute(TempNews newsItem) {
             super.onPostExecute(newsItem);
-            updateData(mId);
+            if (mIsHomeDetail) updateData(mId);
             mTvTitleDetail.setText(newsItem.getTitle());
             mTvContentDetail.setText(newsItem.getDescription());
             mTvAuthor.setText(newsItem.getAuthor());
             mTvTimeDetail.setText(newsItem.getPubDate());
             mTvLink.setText(newsItem.getLinkItem());
+            mShareLink = newsItem.getLinkItem();
             Glide.with(mDetailFragment)
                 .load(newsItem.getImage())
-                .centerCrop()
+                .fitCenter()
                 .placeholder(R.drawable.img_no_image_placeholder)
                 .crossFade()
                 .into(mImgDetail);
@@ -240,7 +254,7 @@ public class DetailFragment extends BaseFragment {
      *
      * @param context context
      * @param link    share content
-     * @return
+     * @return intent chooser include apps which is installed
      */
     public Intent getIntentShare(Context context, String link) {
         //sharing implementation
@@ -261,38 +275,64 @@ public class DetailFragment extends BaseFragment {
                     .name));
                 targetedShareIntent.setType(Constants.INTENT_TYPE);
                 targetedShareIntent.putExtra(Intent.EXTRA_TEXT, link);
-                targetedShareIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R
-                    .string.title_share));
+                targetedShareIntent.putExtra(Intent.EXTRA_SUBJECT,
+                    getResources().getString(R.string.title_share));
                 targetedShareIntent.setPackage(packageName);
                 targetedShareIntents.add(targetedShareIntent);
             }
         }
-        Intent chooserIntent =
-            Intent.createChooser(targetedShareIntents.remove(0), getResources().getString(R
-                .string.title_share));
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,
-            targetedShareIntents.toArray(new Parcelable[]{}));
-        return chooserIntent;
+        if (!targetedShareIntents.isEmpty())
+            return Intent.createChooser(targetedShareIntents.remove(0),
+                getResources().getString(R.string.title_share))
+                .putExtra(Intent.EXTRA_INITIAL_INTENTS,
+                    targetedShareIntents.toArray(new Parcelable[]{}));
+        return null;
     }
 
     /**
-     * method using to update value of viewed = true by id
+     * method using to update value of viewed = true by id, set read time and history index
      *
      * @param id of news
      */
     private void updateData(long id) {
-        Realm realm = Realm.getInstance(new RealmConfiguration.Builder(getActivity()).build());
+        Realm realm = Realm.getDefaultInstance();
         final NewsItem newsItem =
             realm.where(NewsItem.class).equalTo(Constants.KEY_ID, id)
                 .findFirst();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
+                if (newsItem.getHistoryIndex() == Constants.DEF_HISTOTY_INDEX_VALUE)
+                    newsItem.setHistoryIndex(newsItem.getNextHistoryIndex(realm));
+                newsItem.setReadTime(System.currentTimeMillis());
                 newsItem.setViewed(true);
-                realm.copyToRealmOrUpdate(newsItem);
             }
         });
         realm.close();
     }
 
+    /**
+     * method using to open file pdf in external storage
+     *
+     * @param name: file name
+     */
+    private void viewFilePdf(String name) {
+        File pdfFile =
+            new File(getActivity().getExternalFilesDir(Constants.FILE_PATH), name);//File path
+        if (!pdfFile.exists()) {
+            Toast.makeText(getActivity(), R.string.msg_file_not_exists, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Intent target = new Intent(Intent.ACTION_VIEW);
+        target.setDataAndType(Uri.fromFile(pdfFile), Constants.INTENT_OPEN_PDF_TYPE);
+        target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        Intent intent = Intent.createChooser(target,
+            getResources().getString(R.string.title_intent_open_file_pdf));
+        try {
+            startActivity(intent); // open pdf file
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(getActivity(), R.string.msg_install_pdf_reader_app, Toast.LENGTH_SHORT)
+                .show();
+        }
+    }
 }
