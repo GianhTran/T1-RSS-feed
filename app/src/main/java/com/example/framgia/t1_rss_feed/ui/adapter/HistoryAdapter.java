@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
 import com.example.framgia.t1_rss_feed.helper.EventListenerInterface;
-import com.example.framgia.t1_rss_feed.ui.view.FontIcon;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;
@@ -45,21 +44,18 @@ public class HistoryAdapter extends
         private TextView mTvTitle;
         private TextView mTvTime;
         private TextView mTvContent;
-        private FontIcon mFontIconViewed;
 
         public HistoryHolder(View itemView) {
             super(itemView);
             mTvContent = (TextView) itemView.findViewById(R.id.text_content);
             mTvTime = (TextView) itemView.findViewById(R.id.text_time);
             mTvTitle = (TextView) itemView.findViewById(R.id.text_title);
-            mFontIconViewed = (FontIcon) itemView.findViewById(R.id.font_home_viewed);
         }
 
         public void injectData(final NewsItem item, final int position) {
             mTvContent.setText(item.getDescription());
             mTvTime.setText(item.getPubDate());
             mTvTitle.setText(item.getTitle());
-            mFontIconViewed.setVisibility(View.GONE);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

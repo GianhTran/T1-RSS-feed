@@ -114,7 +114,7 @@ public class HomeFragment extends BaseFragment
         mFloatingActionHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mRecyclerViewHome.scrollToPosition(Constants.TOP_POSITION);
+                mRecyclerViewHome.smoothScrollToPosition(Constants.TOP_POSITION);
             }
         });
     }
@@ -220,7 +220,7 @@ public class HomeFragment extends BaseFragment
                 Toast.makeText(getActivity(),
                     R.string.msg_update_error,
                     Toast.LENGTH_SHORT).show();
-                updateData(getChannelName(), Constants.VALUE_ONE);
+                updateData(getChannelName(), Constants.FIRST_PAGE);
             }
         });
     }
@@ -228,7 +228,7 @@ public class HomeFragment extends BaseFragment
     @Override
     public void onItemNewsClick(long itemId, int position) {
         Preferences.with(getActivity()).setPreLoad(position);
-        replaceFragment(R.id.frame_container, DetailFragment.newInstance(itemId, true));
+        addFragment(R.id.frame_container, DetailFragment.newInstance(itemId, true));
     }
 
     private void initToolbar() {
@@ -267,23 +267,19 @@ public class HomeFragment extends BaseFragment
         RealmResults<NewsItem> results = mRealm.where(NewsItem.class)
             .equalTo(Constants.KEY_CHANNEL, channel)
             .findAllSorted(Constants.KEY_INDEX, Sort.ASCENDING);
-        for (NewsItem item : results) {
-            Log.e(Constants.TAG, "channel" + channel + " index=" + item.getIndex());
-        }
         if (results.isEmpty()) {
             showLoading(false);
             return;
         }
         long firstIndex = results.last().getIndex();
         long lastIndex = results.first().getIndex();
-        long secondIndex = firstIndex - (page * 20) + 1;
+        long secondIndex = firstIndex - (page * Constants.ITEMS_PER_PAGE) + 1;
         mIsLoadMore = secondIndex > lastIndex;
         mHomeAdapter.updateData(mRealm.where(NewsItem.class)
             .equalTo(Constants.KEY_CHANNEL, channel)
             .between(Constants.KEY_INDEX, (mIsLoadMore) ? secondIndex : lastIndex, firstIndex)
             .findAll());
         showLoading(false);
-        mRecyclerViewHome.smoothScrollToPosition(Preferences.with(getActivity()).getPreLoad());
     }
 
     private void resetSavedPosition() {
@@ -342,7 +338,7 @@ public class HomeFragment extends BaseFragment
         @Override
         protected void onPostExecute(Boolean hasNew) {
             super.onPostExecute(hasNew);
-            updateData(mChannel, Constants.VALUE_ONE);
+            updateData(mChannel, Constants.FIRST_PAGE);
             if (!hasNew) return;
             Toast.makeText(getActivity(),
                 R.string.msg_has_news,
