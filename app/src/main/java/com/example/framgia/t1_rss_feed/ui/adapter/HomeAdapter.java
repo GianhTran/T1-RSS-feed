@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
 import com.example.framgia.t1_rss_feed.helper.EventListenerInterface;
-import com.example.framgia.t1_rss_feed.ui.view.FontIcon;
 
 import io.realm.RealmList;
 import io.realm.RealmRecyclerViewAdapter;
@@ -88,27 +87,25 @@ public class HomeAdapter extends RealmRecyclerViewAdapter<NewsItem, RecyclerView
         private TextView mTvTitle;
         private TextView mTvTime;
         private TextView mTvContent;
-        private FontIcon mFontIconViewed;
 
         public ItemHolder(View view) {
             super(view);
             mTvContent = (TextView) view.findViewById(R.id.text_content);
             mTvTime = (TextView) view.findViewById(R.id.text_time);
             mTvTitle = (TextView) view.findViewById(R.id.text_title);
-            mFontIconViewed = (FontIcon) view.findViewById(R.id.font_home_viewed);
         }
 
         public void injectData(final NewsItem item, final int position) {
             mTvContent.setText(item.getDescription());
             mTvTime.setText(item.getPubDate());
             mTvTitle.setText(item.getTitle());
-            mFontIconViewed.setTextColor((item.getViewed()) ?
-                context.getResources().getColor(R.color.colorPrimary) :
-                context.getResources().getColor(R.color.backgroundColor));
+            itemView.setBackgroundResource((item.getViewed()) ? R.drawable.bg_border_stroke_viewed
+                : R.drawable.bg_border_stroke);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     mOnItemNewClickListener.onItemNewsClick(item.getId(), position);
+                    itemView.setBackgroundResource(R.drawable.bg_border_stroke_viewed);
                 }
             });
         }

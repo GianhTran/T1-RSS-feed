@@ -127,13 +127,14 @@ public class DetailFragment extends BaseFragment {
 
     private void initToolbar() {
         mToolbarHome = (Toolbar) getActivity().findViewById(R.id.toolbar_home);
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        final AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(mToolbarHome);
         CommonUtil.setToolbarStyle(activity, true, false);
         mToolbarHome.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                replaceFragment(R.id.frame_container, HomeFragment.newInstance());
+                CommonUtil.setToolbarStyle(activity, false, false);
+                removeFragment(mDetailFragment);
             }
         });
     }
