@@ -31,6 +31,7 @@ import com.example.framgia.t1_rss_feed.ui.view.FontIcon;
 import com.example.framgia.t1_rss_feed.util.CommonUtil;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -39,6 +40,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -64,6 +66,7 @@ public class DetailFragment extends BaseFragment {
     private DetailFragment mDetailFragment;
     private ProgressBar mProgressBarDetail;
     private Boolean mIsHomeDetail;
+    private String mImageLink;
 
     public static DetailFragment newInstance(long itemId, boolean isCallFromHome) {
         DetailFragment detailFragment = new DetailFragment();
@@ -142,7 +145,7 @@ public class DetailFragment extends BaseFragment {
     /**
      * async task using to create pdf file
      */
-    private class CreatePdfAsyncTask extends AsyncTask<Void, Void, String> {
+    private class CreatePdfAsyncTask extends AsyncTask<Void, Void, Boolean> {
         private String mTitle;
         private String mContent;
         private String mAuthor;
@@ -156,7 +159,7 @@ public class DetailFragment extends BaseFragment {
         }
 
         @Override
-        protected String doInBackground(Void... voids) {
+        protected Boolean doInBackground(Void... voids) {
             //Using time to make file name
             Date date = new Date();
             String timeStamp = new SimpleDateFormat(Constants.DATE_TIME_FORMAT).format(date);
@@ -170,24 +173,29 @@ public class DetailFragment extends BaseFragment {
                 document.open();
                 //Add content
                 document.add(new Paragraph(mTitle));
+                if (!mImageLink.isEmpty()) {
+                    Image image = Image.getInstance(new URL(mImageLink));
+                    document.add(image);
+                }
                 document.add(new Paragraph(mContent));
                 document.add(new Paragraph(mAuthor));
                 //Close the document
                 document.close();
                 output.close();
-                return getResources().getText(R.string.msg_export_pdf_success).toString() + mName;
+                return true;
             } catch (DocumentException | IOException error) {
-                return getResources().getText(R.string.msg_export_pdf_error).toString();
+                return false;
             }
         }
 
         @Override
-        protected void onPostExecute(String msg) {
-            super.onPostExecute(msg);
+        protected void onPostExecute(Boolean isSuccess) {
+            super.onPostExecute(isSuccess);
             Toast.makeText(getActivity(),
-                msg,
+                (isSuccess) ? R.string.msg_export_pdf_success : R.string.msg_export_pdf_error,
                 Toast.LENGTH_SHORT).show();
-            viewFilePdf(mName);
+            if (isSuccess)
+                viewFilePdf(mName);
         }
     }
 
@@ -222,7 +230,8 @@ public class DetailFragment extends BaseFragment {
                 tempNews.setDescription(newsItem.getDescription());
                 tempNews.setImage(newsItem.getEnclosure().getLink());
                 tempNews.setPubDate(newsItem.getPubDate());
-                tempNews.setLinkItem(newsItem.getLink());
+                if (newsItem.getLink() != null)
+                    tempNews.setLinkItem(newsItem.getLink());
                 return tempNews;
             } finally {
                 if (mRealm != null)
@@ -240,6 +249,7 @@ public class DetailFragment extends BaseFragment {
             mTvTimeDetail.setText(newsItem.getPubDate());
             mTvLink.setText(newsItem.getLinkItem());
             mShareLink = newsItem.getLinkItem();
+            mImageLink = newsItem.getImage();
             Glide.with(mDetailFragment)
                 .load(newsItem.getImage())
                 .fitCenter()
