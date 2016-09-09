@@ -59,4 +59,10 @@ public class Constants {
     public static final String KEY_HISTORY_INDEX = "mHistoryIndex";
     // realm config
     public static final String MY_REALM_NAME = "my_realm.realm";
+    // settings value
+    public static final int DARK_STYLE = 0;
+    public static final int LIGHT_STYLE = 1;
+    public static final int TEXT_SIZE_SMALL = 2;
+    public static final int TEXT_SIZE_MEDIUM = 3;
+    public static final int TEXT_SIZE_LARGE = 4;
 }

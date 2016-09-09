@@ -7,7 +7,18 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppThemeDark" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimarySecond</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkSecond</item>
+        <item name="colorAccent">@color/colorAccentSecond</item>
+    </style>
+
     <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppThemeDark.NoActionBar" parent="AppThemeDark">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
@@ -19,6 +30,23 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/font_icon_size</item>
         <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@android:anim/slide_in_left</item>
+        <item name="android:windowExitAnimation">@android:anim/slide_out_right</item>
+    </style>
+
+    <style name="FontSizeSmall">
+        <item name="android:textSize">@dimen/text_size_small</item>
+    </style>
+
+    <style name="FontSizeMedium">
+        <item name="android:textSize">@dimen/text_size_medium</item>
+    </style>
+
+    <style name="FontSizeLarge">
+        <item name="android:textSize">@dimen/text_size_large</item>
     </style>
 
 </resources>

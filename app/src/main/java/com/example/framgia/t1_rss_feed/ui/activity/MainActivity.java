@@ -9,8 +9,10 @@ import android.view.MenuItem;
 
 import com.example.framgia.t1_rss_feed.BaseActivity;
 import com.example.framgia.t1_rss_feed.Constants;
+import com.example.framgia.t1_rss_feed.Preferences;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
+import com.example.framgia.t1_rss_feed.ui.dialog.SettingsDialog;
 import com.example.framgia.t1_rss_feed.ui.fragment.DetailFragment;
 import com.example.framgia.t1_rss_feed.ui.fragment.HomeFragment;
 import com.example.framgia.t1_rss_feed.util.DateTimeUtil;
@@ -29,6 +31,8 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Preferences.with(this).getStyle() == Constants.DARK_STYLE)
+            setTheme(R.style.AppThemeDark_NoActionBar);
         setContentView(R.layout.activity_main);
         notifyData();
     }
@@ -44,6 +48,9 @@ public class MainActivity extends BaseActivity {
         switch (item.getItemId()) {
             case R.id.action_history:
                 startActivity(new Intent(this, HistoryActivity.class));
+                break;
+            case R.id.action_settings:
+                new SettingsDialog(this).show();
                 break;
         }
         return super.onOptionsItemSelected(item);

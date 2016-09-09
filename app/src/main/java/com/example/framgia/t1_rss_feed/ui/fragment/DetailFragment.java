@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.framgia.t1_rss_feed.BaseFragment;
 import com.example.framgia.t1_rss_feed.Constants;
+import com.example.framgia.t1_rss_feed.Preferences;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
 import com.example.framgia.t1_rss_feed.data.models.TempNews;
@@ -173,7 +174,7 @@ public class DetailFragment extends BaseFragment {
                 document.open();
                 //Add content
                 document.add(new Paragraph(mTitle));
-                if (!mImageLink.isEmpty()) {
+                if (!mImageLink.isEmpty() && Preferences.with(getActivity()).getAllowImage()) {
                     Image image = Image.getInstance(new URL(mImageLink));
                     document.add(image);
                 }
@@ -250,12 +251,13 @@ public class DetailFragment extends BaseFragment {
             mTvLink.setText(newsItem.getLinkItem());
             mShareLink = newsItem.getLinkItem();
             mImageLink = newsItem.getImage();
-            Glide.with(mDetailFragment)
-                .load(newsItem.getImage())
-                .fitCenter()
-                .placeholder(R.drawable.img_no_image_placeholder)
-                .crossFade()
-                .into(mImgDetail);
+            if (Preferences.with(getActivity()).getAllowImage())
+                Glide.with(mDetailFragment)
+                    .load(newsItem.getImage())
+                    .fitCenter()
+                    .placeholder(R.drawable.img_no_image_placeholder)
+                    .crossFade()
+                    .into(mImgDetail);
             showLoading(false);
         }
     }
