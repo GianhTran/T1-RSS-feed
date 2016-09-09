@@ -10,7 +10,8 @@ import java.util.Locale;
  * Created by GianhTNS on 29/08/2016.
  */
 public class DateTimeUtil {
-    private static final String DEFAULT_FORMAT = "EEE, d MMM yyyy HH:mm:ss Z";
+    public static final String DEFAULT_FORMAT = "EEE, d MMM yyyy HH:mm:ss Z";
+    public static final String SECOND_FORMAT = "EEE, d MMM yyyy";
     private static final long DEFAULT_LONG_VALUE = 0L;
 
     /**
@@ -32,8 +33,8 @@ public class DateTimeUtil {
      * @return if (date1 > date2) return > 0 else return < 0
      * @throws ParseException
      */
-    public static Long compareDate(String date1, String date2) {
-        final SimpleDateFormat format = new SimpleDateFormat(DEFAULT_FORMAT, Locale.getDefault());
+    public static Long compareDate(String date1, String date2, String dateFormat) {
+        final SimpleDateFormat format = new SimpleDateFormat(dateFormat, Locale.getDefault());
         try {
             return format.parse(date1).getTime() - format.parse(date2).getTime();
         } catch (ParseException e) {

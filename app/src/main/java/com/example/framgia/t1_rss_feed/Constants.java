@@ -26,6 +26,7 @@ public class Constants {
     public static final Long LONG_ZERO_VALUE = 0L;
     public static final Long DEF_HISTOTY_INDEX_VALUE = -1L;
     public static final String INTENT_OPEN_PDF_TYPE = "application/pdf";
+    public static final int SAME_DAY = 0;
     // channel ID
     public static final int ASIAN_CHANNEL = 0;
     public static final int USA_CHANNEL = 1;

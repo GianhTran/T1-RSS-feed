@@ -1,15 +1,20 @@
 package com.example.framgia.t1_rss_feed.ui.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.framgia.t1_rss_feed.Constants;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
 import com.example.framgia.t1_rss_feed.helper.EventListenerInterface;
+import com.example.framgia.t1_rss_feed.util.DateTimeUtil;
+
+import java.util.Date;
 
 import io.realm.RealmList;
 import io.realm.RealmRecyclerViewAdapter;
@@ -87,25 +92,33 @@ public class HomeAdapter extends RealmRecyclerViewAdapter<NewsItem, RecyclerView
         private TextView mTvTitle;
         private TextView mTvTime;
         private TextView mTvContent;
+        private TextView mNew;
 
         public ItemHolder(View view) {
             super(view);
             mTvContent = (TextView) view.findViewById(R.id.text_content);
             mTvTime = (TextView) view.findViewById(R.id.text_time);
             mTvTitle = (TextView) view.findViewById(R.id.text_title);
+            mNew = (TextView) view.findViewById(R.id.text_new);
         }
 
         public void injectData(final NewsItem item, final int position) {
+            Boolean isNEW = (DateTimeUtil.compareDate(item.getPubDate(),
+                DateTimeUtil.formatDateToString(new Date()),
+                DateTimeUtil.SECOND_FORMAT) == Constants.SAME_DAY);
+            mNew.setVisibility((isNEW && !item.getViewed()) ? View.VISIBLE : View.GONE);
             mTvContent.setText(item.getDescription());
             mTvTime.setText(item.getPubDate());
             mTvTitle.setText(item.getTitle());
-            itemView.setBackgroundResource((item.getViewed()) ? R.drawable.bg_border_stroke_viewed
-                : R.drawable.bg_border_stroke);
+            itemView.setBackgroundColor(ContextCompat.getColor(context,
+                (item.getViewed()) ? R.color.backgroundColor : R.color.backgroundColorSecond));
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     mOnItemNewClickListener.onItemNewsClick(item.getId(), position);
-                    itemView.setBackgroundResource(R.drawable.bg_border_stroke_viewed);
+                    itemView.setBackgroundColor(ContextCompat.getColor(context,
+                        R.color.backgroundColor));
+                    mNew.setVisibility(View.GONE);
                 }
             });
         }
