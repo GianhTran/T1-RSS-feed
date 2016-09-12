@@ -6,6 +6,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.example.framgia.t1_rss_feed.BaseActivity;
+import com.example.framgia.t1_rss_feed.Constants;
+import com.example.framgia.t1_rss_feed.Preferences;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.ui.fragment.DetailFragment;
 import com.example.framgia.t1_rss_feed.ui.fragment.HistoryFragment;
@@ -21,6 +23,8 @@ public class HistoryActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Preferences.with(this).getStyle() == Constants.DARK_STYLE)
+            setTheme(R.style.AppThemeDark_NoActionBar);
         setContentView(R.layout.activity_history);
         initToolbar();
         changeFragment(R.id.frame_container_history, HistoryFragment.newInstance(), "");

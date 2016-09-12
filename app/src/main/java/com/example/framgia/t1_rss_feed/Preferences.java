@@ -10,6 +10,9 @@ import android.content.SharedPreferences;
 public class Preferences {
     private static final String PRE_LOAD = "preLoad";
     private static final String PRE_CHANNEL = "channel";
+    private static final String PRE_STYLE = "pref_style";
+    private static final String PRE_ALLOW_IMAGE = "pref_allow_image";
+    private static final String PRE_TEXT_SIZE = "pref_text_size";
     private static final String PREFS_NAME = "prefs";
     private static Preferences sInstance;
     private final SharedPreferences SHARE_PREFERENCES;
@@ -44,5 +47,35 @@ public class Preferences {
 
     public int getChannel() {
         return SHARE_PREFERENCES.getInt(PRE_CHANNEL, 0);
+    }
+
+    public int getStyle() {
+        return SHARE_PREFERENCES.getInt(PRE_STYLE, Constants.LIGHT_STYLE);
+    }
+
+    public void setStyle(int style) {
+        SHARE_PREFERENCES.edit()
+            .putInt(PRE_STYLE, style)
+            .apply();
+    }
+
+    public void setAllowImage(Boolean isAllow) {
+        SHARE_PREFERENCES.edit()
+            .putBoolean(PRE_ALLOW_IMAGE, isAllow)
+            .apply();
+    }
+
+    public Boolean getAllowImage() {
+        return SHARE_PREFERENCES.getBoolean(PRE_ALLOW_IMAGE, true);
+    }
+
+    public void setTextSize(int size) {
+        SHARE_PREFERENCES.edit()
+            .putInt(PRE_TEXT_SIZE, size)
+            .apply();
+    }
+
+    public int getTextSize() {
+        return SHARE_PREFERENCES.getInt(PRE_TEXT_SIZE, Constants.TEXT_SIZE_MEDIUM);
     }
 }

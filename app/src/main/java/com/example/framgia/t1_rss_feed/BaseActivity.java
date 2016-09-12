@@ -14,4 +14,20 @@ public class BaseActivity extends AppCompatActivity {
             .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
             .commitAllowingStateLoss();
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        switch (Preferences.with(this).getTextSize()) {
+            case Constants.TEXT_SIZE_SMALL:
+                setTheme(R.style.FontSizeSmall);
+                break;
+            case Constants.TEXT_SIZE_LARGE:
+                setTheme(R.style.FontSizeLarge);
+                break;
+            default:
+                setTheme(R.style.FontSizeMedium);
+                break;
+        }
+    }
 }
