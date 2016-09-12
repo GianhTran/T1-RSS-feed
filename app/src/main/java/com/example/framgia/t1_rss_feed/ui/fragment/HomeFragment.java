@@ -4,20 +4,20 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.framgia.t1_rss_feed.BaseFragment;
 import com.example.framgia.t1_rss_feed.Constants;
@@ -59,6 +59,7 @@ public class HomeFragment extends BaseFragment
     private Realm mRealm;
     private FloatingActionButton mFloatingActionHome;
     private Boolean mIsLoadMore = true;
+    private CoordinatorLayout mCoordinatorLayout;
 
     public static HomeFragment newInstance() {
         return new HomeFragment();
@@ -96,6 +97,7 @@ public class HomeFragment extends BaseFragment
         mTvDataEmpty = (TextView) view.findViewById(R.id.text_no_data);
         mFloatingActionHome = (FloatingActionButton) view.findViewById(R.id.fab_home);
         mSpinnerChannel.setSelection(Preferences.with(getActivity()).getChannel());
+        mCoordinatorLayout = (CoordinatorLayout) view.findViewById(R.id.coordinator_home);
     }
 
     private void handleEvent() {
@@ -217,9 +219,9 @@ public class HomeFragment extends BaseFragment
 
             @Override
             public void onFailure(Call<News> call, Throwable t) {
-                Toast.makeText(getActivity(),
+                Snackbar.make(mCoordinatorLayout,
                     R.string.msg_update_error,
-                    Toast.LENGTH_SHORT).show();
+                    Snackbar.LENGTH_SHORT).show();
                 updateData(getChannelName(), Constants.FIRST_PAGE);
             }
         });
@@ -340,9 +342,7 @@ public class HomeFragment extends BaseFragment
             super.onPostExecute(hasNew);
             updateData(mChannel, Constants.FIRST_PAGE);
             if (!hasNew) return;
-            Toast.makeText(getActivity(),
-                R.string.msg_has_news,
-                Toast.LENGTH_SHORT).show();
+            Snackbar.make(mCoordinatorLayout, R.string.msg_has_news, Snackbar.LENGTH_SHORT).show();
         }
     }
 

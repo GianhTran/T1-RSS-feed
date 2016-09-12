@@ -11,15 +11,16 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.framgia.t1_rss_feed.BaseFragment;
@@ -68,6 +69,7 @@ public class DetailFragment extends BaseFragment {
     private ProgressBar mProgressBarDetail;
     private Boolean mIsHomeDetail;
     private String mImageLink;
+    private LinearLayout mLinearLayout;
 
     public static DetailFragment newInstance(long itemId, boolean isCallFromHome) {
         DetailFragment detailFragment = new DetailFragment();
@@ -103,6 +105,7 @@ public class DetailFragment extends BaseFragment {
         mFontIconPrint = (FontIcon) view.findViewById(R.id.font_print);
         mFontIconShare = (FontIcon) view.findViewById(R.id.font_share);
         mProgressBarDetail = (ProgressBar) view.findViewById(R.id.progress_bar_detail);
+        mLinearLayout = (LinearLayout) view.findViewById(R.id.linear_detail);
     }
 
     private void handleEvent() {
@@ -112,8 +115,9 @@ public class DetailFragment extends BaseFragment {
                 if (mShareLink == null) return;
                 Intent intent = getIntentShare(getActivity(), mShareLink);
                 if (intent == null) {
-                    Toast.makeText(getActivity(), R.string.msg_install_app, Toast.LENGTH_SHORT)
-                        .show();
+                    Snackbar.make(mLinearLayout,
+                        R.string.msg_install_app,
+                        Snackbar.LENGTH_SHORT).show();
                     return;
                 }
                 startActivity(getIntentShare(getActivity(), mShareLink));
@@ -192,9 +196,9 @@ public class DetailFragment extends BaseFragment {
         @Override
         protected void onPostExecute(Boolean isSuccess) {
             super.onPostExecute(isSuccess);
-            Toast.makeText(getActivity(),
+            Snackbar.make(mLinearLayout,
                 (isSuccess) ? R.string.msg_export_pdf_success : R.string.msg_export_pdf_error,
-                Toast.LENGTH_SHORT).show();
+                Snackbar.LENGTH_SHORT).show();
             if (isSuccess)
                 viewFilePdf(mName);
         }
@@ -333,7 +337,9 @@ public class DetailFragment extends BaseFragment {
         File pdfFile =
             new File(getActivity().getExternalFilesDir(Constants.FILE_PATH), name);//File path
         if (!pdfFile.exists()) {
-            Toast.makeText(getActivity(), R.string.msg_file_not_exists, Toast.LENGTH_SHORT).show();
+            Snackbar.make(mLinearLayout,
+                R.string.msg_file_not_exists,
+                Snackbar.LENGTH_SHORT).show();
             return;
         }
         Intent target = new Intent(Intent.ACTION_VIEW);
@@ -344,8 +350,9 @@ public class DetailFragment extends BaseFragment {
         try {
             startActivity(intent); // open pdf file
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(getActivity(), R.string.msg_install_pdf_reader_app, Toast.LENGTH_SHORT)
-                .show();
+            Snackbar.make(mLinearLayout,
+                R.string.msg_install_pdf_reader_app,
+                Snackbar.LENGTH_SHORT).show();
         }
     }
 }

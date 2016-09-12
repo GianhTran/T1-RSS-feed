@@ -87,8 +87,9 @@ public class MainActivity extends BaseActivity {
             Realm realm = Realm.getDefaultInstance();
             RealmResults<NewsItem> results = realm.where(NewsItem.class).findAll();
             for (final NewsItem item : results) {
-                if (DateTimeUtil.compareDate(item.getPubDate(), DateTimeUtil.formatDateToString
-                    (mDeadline)) >= 0) continue;
+                if (DateTimeUtil.compareDate(item.getPubDate(),
+                    DateTimeUtil.formatDateToString(mDeadline),
+                    DateTimeUtil.DEFAULT_FORMAT) >= 0) continue;
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
