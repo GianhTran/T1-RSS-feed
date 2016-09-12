@@ -10,8 +10,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:entries="@array/channel_arrays"
-        android:prompt="@string/title_prompt"/>
+        android:background="@android:color/white"
+        android:paddingBottom="@dimen/dimen_medium"
+        android:paddingTop="@dimen/dimen_medium"
+        android:prompt="@string/title_prompt"
+        android:spinnerMode="dropdown"/>
 
     <TextView
         android:id="@+id/text_no_data"

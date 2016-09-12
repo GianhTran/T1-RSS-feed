@@ -32,6 +32,12 @@
     <string name="text_size_small">S</string>
     <string name="text_size_medium">M</string>
     <string name="text_size_large">L</string>
+    <string name="text_add_more_channel">add more channel</string>
+    <string name="text_rss_link">Rss link</string>
+    <string name="text_rss_name">Rss name</string>
+    <string name="msg_name_empty">rss name can not be empty</string>
+    <string name="msg_link_empty">rss link can not be empty</string>
+    <string name="msg_link_incorrect">link is incorrect</string>
     <string name="menu_clear_all_history">clear all history</string>
     <string name="menu_select_history">select history</string>
     <string name="text_clear_all">clear all</string>

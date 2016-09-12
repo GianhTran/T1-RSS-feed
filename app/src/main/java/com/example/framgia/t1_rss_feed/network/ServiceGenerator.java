@@ -13,17 +13,22 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
  * Created by GianhTNS on 26/08/2016.
  */
 public class ServiceGenerator {
-    public static final String API_BASE_URL = "http://www.voanews.com/api/";
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
         .connectTimeout(Constants.CONNECT_TIME_OUT, TimeUnit.MILLISECONDS)
         .readTimeout(Constants.READ_TIME_OUT, TimeUnit.MILLISECONDS);
     private static Retrofit.Builder builder =
         new Retrofit.Builder()
-            .baseUrl(API_BASE_URL)
+            .baseUrl(Constants.VOA_BASE_URL)
             .addConverterFactory(SimpleXmlConverterFactory.create());
 
     public static <S> S createService(Class<S> serviceClass) {
         Retrofit retrofit = builder.client(httpClient.build()).build();
         return retrofit.create(serviceClass);
+    }
+
+    public static void changeApiBaseUrl(String newApiBaseUrl) {
+        builder = new Retrofit.Builder()
+            .addConverterFactory(SimpleXmlConverterFactory.create())
+            .baseUrl(newApiBaseUrl);
     }
 }

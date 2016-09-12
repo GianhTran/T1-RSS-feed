@@ -8,14 +8,13 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -25,12 +24,16 @@ import com.example.framgia.t1_rss_feed.Preferences;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.News;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
+import com.example.framgia.t1_rss_feed.data.models.RssName;
+import com.example.framgia.t1_rss_feed.data.models.RssSource;
+import com.example.framgia.t1_rss_feed.data.models.TinhteChannel;
+import com.example.framgia.t1_rss_feed.data.models.VnExpressChannel;
+import com.example.framgia.t1_rss_feed.data.models.VoaChannel;
 import com.example.framgia.t1_rss_feed.helper.EndlessRecyclerViewScrollListener;
 import com.example.framgia.t1_rss_feed.helper.EventListenerInterface;
 import com.example.framgia.t1_rss_feed.network.ApiInterface;
 import com.example.framgia.t1_rss_feed.network.ServiceGenerator;
 import com.example.framgia.t1_rss_feed.ui.adapter.HomeAdapter;
-import com.example.framgia.t1_rss_feed.util.CommonUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,17 +55,22 @@ public class HomeFragment extends BaseFragment
     private SwipeRefreshLayout mSwipeRefreshHome;
     private RecyclerView mRecyclerViewHome;
     private HomeAdapter mHomeAdapter;
-    private Toolbar mToolbarHome;
     private Spinner mSpinnerChannel;
-    private int mChannelId = Constants.ASIAN_CHANNEL;
+    private int mChannelId;
     private TextView mTvDataEmpty;
     private Realm mRealm;
     private FloatingActionButton mFloatingActionHome;
     private Boolean mIsLoadMore = true;
     private CoordinatorLayout mCoordinatorLayout;
+    private int mRssId;
+    private RssSource mRssSource;
 
-    public static HomeFragment newInstance() {
-        return new HomeFragment();
+    public static HomeFragment newInstance(int rssId) {
+        HomeFragment homeFragment = new HomeFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constants.KEY_RSS_ID, rssId);
+        homeFragment.setArguments(bundle);
+        return homeFragment;
     }
 
     @Override
@@ -76,8 +84,11 @@ public class HomeFragment extends BaseFragment
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mRealm = Realm.getDefaultInstance();
-        initToolbar();
+        mRssId = getArguments().getInt(Constants.KEY_RSS_ID);
         initView(view);
+        initSource();
+        initToolbar();
+        initSpinner();
         handleEvent();
         initRecyclerView();
         initSwipeToRefresh();
@@ -90,14 +101,44 @@ public class HomeFragment extends BaseFragment
         loadData();
     }
 
+    private void initSource() {
+        mRssSource = mRealm.where(RssSource.class).equalTo(Constants.KEY_ID, mRssId).findFirst();
+    }
+
     private void initView(View view) {
         mSwipeRefreshHome = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_home);
         mRecyclerViewHome = (RecyclerView) view.findViewById(R.id.recycler_home);
         mSpinnerChannel = (Spinner) view.findViewById(R.id.spinner_channel);
         mTvDataEmpty = (TextView) view.findViewById(R.id.text_no_data);
         mFloatingActionHome = (FloatingActionButton) view.findViewById(R.id.fab_home);
-        mSpinnerChannel.setSelection(Preferences.with(getActivity()).getChannel());
         mCoordinatorLayout = (CoordinatorLayout) view.findViewById(R.id.coordinator_home);
+    }
+
+    private void initSpinner() {
+        List<String> spinnerArray = new ArrayList<>();
+        switch (mRssId) {
+            case Constants.TINHTE_RSS_ID:
+                spinnerArray.add(TinhteChannel.TINHTE_CHANNEL.getName());
+                break;
+            case Constants.VN_EXPRESS_RSS_ID:
+                for (VnExpressChannel channel : VnExpressChannel.values()) {
+                    spinnerArray.add(channel.getName());
+                }
+                break;
+            case Constants.VOA_RSS_ID:
+                for (VoaChannel channel : VoaChannel.values()) {
+                    spinnerArray.add(channel.getName());
+                }
+                break;
+            default:
+                mSpinnerChannel.setVisibility(View.GONE);
+                break;
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+            android.R.layout.simple_spinner_item,
+            spinnerArray);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinnerChannel.setAdapter(adapter);
     }
 
     private void handleEvent() {
@@ -170,51 +211,13 @@ public class HomeFragment extends BaseFragment
         clearList();
         showEmpty(false);
         showLoading(true);
-        ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class);
-        Call<News> call;
-        switch (mChannelId) {
-            case Constants.ASIAN_CHANNEL:
-                call = apiInterface.loadNewsOfAsian();
-                break;
-            case Constants.AFRICA_CHANNEL:
-                call = apiInterface.loadNewsOfAfrica();
-                break;
-            case Constants.ONE_MINUTE_FEATURE_CHANNEL:
-                call = apiInterface.loadNewsOfOneMinuteFeatures();
-                break;
-            case Constants.ART_CHANNEL:
-                call = apiInterface.loadNewsOfArt();
-                break;
-            case Constants.EUROPE_CHANNEL:
-                call = apiInterface.loadNewsOfEurope();
-                break;
-            case Constants.USA_CHANNEL:
-                call = apiInterface.loadNewsOfUsa();
-                break;
-            case Constants.MIDDLE_EAST_CHANNEL:
-                call = apiInterface.loadNewsOfMiddleEast();
-                break;
-            case Constants.HEATH_CHANNEL:
-                call = apiInterface.loadNewsOfHealth();
-                break;
-            case Constants.USA_VOTE_CHANNEL:
-                call = apiInterface.loadNewsOf2016UsaVotes();
-                break;
-            case Constants.EXTREME_CHANNEL:
-                call = apiInterface.loadNewsOfExtremismWatch();
-                break;
-            case Constants.PHOTO_CHANNEL:
-                call = apiInterface.loadNewsOfDayInPhotos();
-                break;
-            default:
-                call = apiInterface.loadNewsOfAsian();
-                break;
-        }
-        call.enqueue(new Callback<News>() {
+        getCallBack().enqueue(new Callback<News>() {
             @Override
             public void onResponse(Call<News> call, Response<News> response) {
+                String channel = response.body().getChannel().getTitle();
                 List<NewsItem> items = response.body().getChannel().getItems();
-                checkData(items, response.body().getChannel().getTitle());
+                checkData(items, channel);
+                if (!mRssSource.getDefault()) setChannel(channel);
             }
 
             @Override
@@ -233,11 +236,26 @@ public class HomeFragment extends BaseFragment
         addFragment(R.id.frame_container, DetailFragment.newInstance(itemId, true));
     }
 
+    /**
+     * set title of toolbar
+     */
     private void initToolbar() {
-        mToolbarHome = (Toolbar) getActivity().findViewById(R.id.toolbar_home);
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.setSupportActionBar(mToolbarHome);
-        CommonUtil.setToolbarStyle(activity, false, false);
+        String tittle;
+        switch (mRssId) {
+            case Constants.TINHTE_RSS_ID:
+                tittle = RssName.TINHTE.getName();
+                break;
+            case Constants.VOA_RSS_ID:
+                tittle = RssName.VOA.getName();
+                break;
+            case Constants.VN_EXPRESS_RSS_ID:
+                tittle = RssName.VNEXRESS.getName();
+                break;
+            default:
+                tittle = mRssSource.getRssName();
+                break;
+        }
+        //todo using interface set title
     }
 
     /**
@@ -289,8 +307,16 @@ public class HomeFragment extends BaseFragment
     }
 
     private String getChannelName() {
-        return (getActivity().getResources().getTextArray(R.array
-            .channel_arrays))[mChannelId].toString();
+        switch (mRssId) {
+            case Constants.TINHTE_RSS_ID:
+                return TinhteChannel.getNameByCode(mChannelId);
+            case Constants.VOA_RSS_ID:
+                return VoaChannel.getNameByCode(mChannelId);
+            case Constants.VN_EXPRESS_RSS_ID:
+                return VnExpressChannel.getNameByCode(mChannelId);
+            default:
+                return mRssSource.getRssChannel();
+        }
     }
 
     /**
@@ -354,5 +380,104 @@ public class HomeFragment extends BaseFragment
     private void clearList() {
         if (mHomeAdapter != null)
             mHomeAdapter.updateData(new RealmList<NewsItem>());
+    }
+
+    private Call<News> getCallBack() {
+        ApiInterface apiInterface;
+        switch (mRssId) {
+            case Constants.TINHTE_RSS_ID: {
+                apiInterface = getApiInterface(Constants.TINHTE_BASE_URL);
+                return apiInterface.getTinhTeFeed();
+            }
+            case Constants.VOA_RSS_ID: {
+                apiInterface = getApiInterface(Constants.VOA_BASE_URL);
+                switch (mChannelId) {
+                    case Constants.ASIAN_CHANNEL:
+                        return apiInterface.loadNewsOfAsian();
+                    case Constants.AFRICA_CHANNEL:
+                        return apiInterface.loadNewsOfAfrica();
+                    case Constants.ONE_MINUTE_FEATURE_CHANNEL:
+                        return apiInterface.loadNewsOfOneMinuteFeatures();
+                    case Constants.ART_CHANNEL:
+                        return apiInterface.loadNewsOfArt();
+                    case Constants.EUROPE_CHANNEL:
+                        return apiInterface.loadNewsOfEurope();
+                    case Constants.USA_CHANNEL:
+                        return apiInterface.loadNewsOfUsa();
+                    case Constants.MIDDLE_EAST_CHANNEL:
+                        return apiInterface.loadNewsOfMiddleEast();
+                    case Constants.HEATH_CHANNEL:
+                        return apiInterface.loadNewsOfHealth();
+                    case Constants.USA_VOTE_CHANNEL:
+                        return apiInterface.loadNewsOf2016UsaVotes();
+                    case Constants.EXTREME_CHANNEL:
+                        return apiInterface.loadNewsOfExtremismWatch();
+                    case Constants.PHOTO_CHANNEL:
+                        return apiInterface.loadNewsOfDayInPhotos();
+                    default:
+                        return apiInterface.loadNewsOfAsian();
+                }
+            }
+            case Constants.VN_EXPRESS_RSS_ID:
+                apiInterface = getApiInterface(Constants.VN_EXPRESS_BASE_URL);
+                switch (mChannelId) {
+                    case Constants.HOME:
+                        return apiInterface.getVnExpressHome();
+                    case Constants.NEWS:
+                        return apiInterface.getVnExpressNews();
+                    case Constants.WORLD:
+                        return apiInterface.getVnExpressWorld();
+                    case Constants.BUSINESS:
+                        return apiInterface.getVnExpressBusiness();
+                    case Constants.ENTERTAINMENT:
+                        return apiInterface.getVnExpressEntertainment();
+                    case Constants.SPORT:
+                        return apiInterface.getVnExpressSport();
+                    case Constants.LAW:
+                        return apiInterface.getVnExpressLaw();
+                    case Constants.EDUCATION:
+                        return apiInterface.getVnExpressEducation();
+                    case Constants.HEALTH:
+                        return apiInterface.getVnExpressHealth();
+                    case Constants.FAMILY:
+                        return apiInterface.getVnExpressFamilly();
+                    case Constants.TRAVEL:
+                        return apiInterface.getVnExpressTravel();
+                    case Constants.SCIENCE:
+                        return apiInterface.getVnExpressScience();
+                    case Constants.IT:
+                        return apiInterface.getVnExpressIT();
+                    case Constants.OTO:
+                        return apiInterface.getVnExpressOto();
+                    case Constants.COMMUNITY:
+                        return apiInterface.getVnExpressCommunity();
+                    case Constants.SHARE:
+                        return apiInterface.getVnExpressShare();
+                    default:
+                        return apiInterface.getVnExpressFunny();
+                }
+            default:
+                apiInterface = ServiceGenerator.createService(ApiInterface.class);
+                return apiInterface.getCustomFeed(mRssSource.getRssLink());
+        }
+    }
+
+    private ApiInterface getApiInterface(String url) {
+        ServiceGenerator.changeApiBaseUrl(url);
+        return ServiceGenerator.createService(ApiInterface.class);
+    }
+
+    /**
+     * set channel for rss which registered
+     *
+     * @param channel chanel of rss
+     */
+    private void setChannel(final String channel) {
+        mRealm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                mRssSource.setRssChannel(channel);
+            }
+        });
     }
 }

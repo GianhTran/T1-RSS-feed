@@ -51,6 +51,8 @@ public class NewsItem extends RealmObject implements Parcelable {
     private String mAuthor;
     @Element(name = "comments", required = false)
     private String mComments;
+    @Element(name = "creator", required = false)
+    private String mCreator;
     private String mChannel;
     private Boolean mViewed;
     // realm list object can not using as java list, so need to create values below

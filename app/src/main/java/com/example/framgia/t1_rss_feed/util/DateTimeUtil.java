@@ -37,7 +37,7 @@ public class DateTimeUtil {
         final SimpleDateFormat format = new SimpleDateFormat(dateFormat, Locale.getDefault());
         try {
             return format.parse(date1).getTime() - format.parse(date2).getTime();
-        } catch (ParseException e) {
+        } catch (ParseException | NullPointerException e) {
             return DEFAULT_LONG_VALUE;
         }
     }

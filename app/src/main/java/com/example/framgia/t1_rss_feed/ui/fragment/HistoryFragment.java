@@ -20,7 +20,6 @@ import com.example.framgia.t1_rss_feed.data.models.NewsItem;
 import com.example.framgia.t1_rss_feed.helper.EndlessRecyclerViewScrollListener;
 import com.example.framgia.t1_rss_feed.helper.EventListenerInterface;
 import com.example.framgia.t1_rss_feed.ui.adapter.HistoryAdapter;
-import com.example.framgia.t1_rss_feed.ui.view.DividerItemDecoration;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -97,15 +96,13 @@ public class HistoryFragment extends BaseFragment
         mRecyclerViewHistory.setLayoutManager(layoutManager);
         mRecyclerViewHistory.setAdapter(mAdapter);
         mRecyclerViewHistory.setHasFixedSize(true);
-        mRecyclerViewHistory.addItemDecoration(
-            new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         showLoading(false);
         mRecyclerViewHistory
             .addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
                 @Override
                 public void onLoadMore(int page, int totalItemsCount) {
                     if (!mIsLoadMore) return;
-                    mAdapter.updateData(getResultByPage(page + 1));
+                    mAdapter.updateData(getResultByPage(page + 1)); // start from 1
                 }
             });
     }

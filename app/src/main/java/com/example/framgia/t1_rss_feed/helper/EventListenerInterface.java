@@ -13,6 +13,27 @@ public class EventListenerInterface {
     }
 
     /**
+     * handle menu click listener
+     */
+    public interface OnMenuItemClickListener {
+        void onMenuItemClick(int rssId);
+    }
+
+    /**
+     * handle button click add rss event
+     */
+    public interface OnClickAddRssListener {
+        void onClickAddRss();
+    }
+
+    /**
+     * handle event submit add rss event from dialog
+     */
+    public interface OnSubmitAddRssListener {
+        void onSubmitAddRss(String name, String link);
+    }
+
+    /**
      * handler check box click listener
      */
     public interface OnItemCheckListener {

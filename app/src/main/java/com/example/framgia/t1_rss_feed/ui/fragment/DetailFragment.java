@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,7 +88,6 @@ public class DetailFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         mDetailFragment = this;
         mIsHomeDetail = getArguments().getBoolean(Constants.INTENT_KEY_CALL_FROM_HOME);
-        if (mIsHomeDetail) initToolbar();
         initView(view);
         handleEvent();
         new LoadNewsDetailAsyncTask(getArguments().getLong(Constants.INTENT_KEY_NEWS_ITEM_ID))
@@ -137,7 +137,7 @@ public class DetailFragment extends BaseFragment {
         mToolbarHome = (Toolbar) getActivity().findViewById(R.id.toolbar_home);
         final AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(mToolbarHome);
-        CommonUtil.setToolbarStyle(activity, true, false);
+        CommonUtil.setToolbarStyle(activity, true, true);
         mToolbarHome.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -147,123 +147,8 @@ public class DetailFragment extends BaseFragment {
         });
     }
 
-    /**
-     * async task using to create pdf file
-     */
-    private class CreatePdfAsyncTask extends AsyncTask<Void, Void, Boolean> {
-        private String mTitle;
-        private String mContent;
-        private String mAuthor;
-        private String mName;
-
-        public CreatePdfAsyncTask(String author, String content, String title) {
-            super();
-            mTitle = title;
-            mContent = content;
-            mAuthor = author;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            //Using time to make file name
-            Date date = new Date();
-            String timeStamp = new SimpleDateFormat(Constants.DATE_TIME_FORMAT).format(date);
-            mName = Constants.PDF_TITLE + timeStamp + Constants.PDF_TYPE;
-            File myFile = new File(getActivity().getExternalFilesDir(Constants.FILE_PATH), mName);
-            OutputStream output;
-            try {
-                output = new FileOutputStream(myFile);
-                Document document = new Document(PageSize.LETTER);
-                PdfWriter.getInstance(document, output);
-                document.open();
-                //Add content
-                document.add(new Paragraph(mTitle));
-                if (!mImageLink.isEmpty() && Preferences.with(getActivity()).getAllowImage()) {
-                    Image image = Image.getInstance(new URL(mImageLink));
-                    document.add(image);
-                }
-                document.add(new Paragraph(mContent));
-                document.add(new Paragraph(mAuthor));
-                //Close the document
-                document.close();
-                output.close();
-                return true;
-            } catch (DocumentException | IOException error) {
-                return false;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean isSuccess) {
-            super.onPostExecute(isSuccess);
-            Snackbar.make(mLinearLayout,
-                (isSuccess) ? R.string.msg_export_pdf_success : R.string.msg_export_pdf_error,
-                Snackbar.LENGTH_SHORT).show();
-            if (isSuccess)
-                viewFilePdf(mName);
-        }
-    }
-
     private void showLoading(Boolean isLoading) {
         mProgressBarDetail.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-    }
-
-    /**
-     * AsyncTask using to load news by id and update ui
-     */
-    private class LoadNewsDetailAsyncTask extends AsyncTask<Void, Void, TempNews> {
-        private long mId;
-        private Realm mRealm;
-
-        public LoadNewsDetailAsyncTask(long id) {
-            super();
-            this.mId = id;
-            showLoading(true);
-        }
-
-        @Override
-        protected TempNews doInBackground(Void... voids) {
-            try {
-                mRealm = Realm.getDefaultInstance();
-                final NewsItem newsItem = mRealm
-                    .where(NewsItem.class)
-                    .equalTo(Constants.KEY_ID, mId)
-                    .findFirst();
-                TempNews tempNews = new TempNews();
-                tempNews.setTitle(newsItem.getTitle());
-                tempNews.setAuthor(newsItem.getAuthor());
-                tempNews.setDescription(newsItem.getDescription());
-                tempNews.setImage(newsItem.getEnclosure().getLink());
-                tempNews.setPubDate(newsItem.getPubDate());
-                if (newsItem.getLink() != null)
-                    tempNews.setLinkItem(newsItem.getLink());
-                return tempNews;
-            } finally {
-                if (mRealm != null)
-                    mRealm.close();
-            }
-        }
-
-        @Override
-        protected void onPostExecute(TempNews newsItem) {
-            super.onPostExecute(newsItem);
-            if (mIsHomeDetail) updateData(mId);
-            mTvTitleDetail.setText(newsItem.getTitle());
-            mTvContentDetail.setText(newsItem.getDescription());
-            mTvAuthor.setText(newsItem.getAuthor());
-            mTvTimeDetail.setText(newsItem.getPubDate());
-            mTvLink.setText(newsItem.getLinkItem());
-            mShareLink = newsItem.getLinkItem();
-            mImageLink = newsItem.getImage();
-            if (Preferences.with(getActivity()).getAllowImage())
-                Glide.with(mDetailFragment)
-                    .load(newsItem.getImage())
-                    .fitCenter()
-                    .placeholder(R.drawable.img_no_image_placeholder)
-                    .crossFade()
-                    .into(mImgDetail);
-            showLoading(false);
-        }
     }
 
     /**
@@ -353,6 +238,122 @@ public class DetailFragment extends BaseFragment {
             Snackbar.make(mLinearLayout,
                 R.string.msg_install_pdf_reader_app,
                 Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * async task using to create pdf file
+     */
+    private class CreatePdfAsyncTask extends AsyncTask<Void, Void, Boolean> {
+        private String mTitle;
+        private String mContent;
+        private String mAuthor;
+        private String mName;
+
+        public CreatePdfAsyncTask(String author, String content, String title) {
+            super();
+            mTitle = title;
+            mContent = content;
+            mAuthor = author;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            //Using time to make file name
+            Date date = new Date();
+            String timeStamp = new SimpleDateFormat(Constants.DATE_TIME_FORMAT).format(date);
+            mName = Constants.PDF_TITLE + timeStamp + Constants.PDF_TYPE;
+            File myFile = new File(getActivity().getExternalFilesDir(Constants.FILE_PATH), mName);
+            OutputStream output;
+            try {
+                output = new FileOutputStream(myFile);
+                Document document = new Document(PageSize.LETTER);
+                PdfWriter.getInstance(document, output);
+                document.open();
+                //Add content
+                document.add(new Paragraph(mTitle));
+                if (mImageLink != null && Preferences.with(getActivity()).getAllowImage()) {
+                    Image image = Image.getInstance(new URL(mImageLink));
+                    document.add(image);
+                }
+                document.add(new Paragraph(mContent));
+                document.add(new Paragraph(mAuthor));
+                //Close the document
+                document.close();
+                output.close();
+                return true;
+            } catch (DocumentException | IOException error) {
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isSuccess) {
+            super.onPostExecute(isSuccess);
+            Snackbar.make(mLinearLayout,
+                (isSuccess) ? R.string.msg_export_pdf_success : R.string.msg_export_pdf_error,
+                Snackbar.LENGTH_SHORT).show();
+            if (isSuccess)
+                viewFilePdf(mName);
+        }
+    }
+
+    /**
+     * AsyncTask using to load news by id and update ui
+     */
+    private class LoadNewsDetailAsyncTask extends AsyncTask<Void, Void, TempNews> {
+        private long mId;
+        private Realm mRealm;
+
+        public LoadNewsDetailAsyncTask(long id) {
+            super();
+            this.mId = id;
+            showLoading(true);
+        }
+
+        @Override
+        protected TempNews doInBackground(Void... voids) {
+            try {
+                mRealm = Realm.getDefaultInstance();
+                final NewsItem newsItem = mRealm
+                    .where(NewsItem.class)
+                    .equalTo(Constants.KEY_ID, mId)
+                    .findFirst();
+                TempNews tempNews = new TempNews();
+                tempNews.setTitle(newsItem.getTitle());
+                tempNews.setAuthor(newsItem.getAuthor());
+                tempNews.setDescription(newsItem.getDescription());
+                if (newsItem.getEnclosure() != null)
+                    tempNews.setImage(newsItem.getEnclosure().getLink());
+                tempNews.setPubDate(newsItem.getPubDate());
+                if (newsItem.getLink() != null)
+                    tempNews.setLinkItem(newsItem.getLink());
+                return tempNews;
+            } finally {
+                if (mRealm != null)
+                    mRealm.close();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(TempNews newsItem) {
+            super.onPostExecute(newsItem);
+            if (mIsHomeDetail) updateData(mId);
+            mTvTitleDetail.setText(newsItem.getTitle());
+            mTvContentDetail.setText(Html.fromHtml(newsItem.getDescription()));
+            mTvAuthor.setText(newsItem.getAuthor());
+            mTvTimeDetail.setText(newsItem.getPubDate());
+            mTvLink.setText(newsItem.getLinkItem());
+            mShareLink = newsItem.getLinkItem();
+            mImageLink = newsItem.getImage();
+            if (Preferences.with(getActivity()).getAllowImage())
+                Glide.with(mDetailFragment)
+                    .load(newsItem.getImage())
+                    .fitCenter()
+                    .placeholder(R.drawable.img_no_image_placeholder)
+                    .crossFade()
+                    .into(mImgDetail);
+            showLoading(false);
         }
     }
 }

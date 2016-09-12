@@ -11,7 +11,7 @@ import org.simpleframework.xml.Root;
 public class News {
     @Element(name = "version", required = false)
     private String mVersion;
-    @Element(name = "channel")
+    @Element(name = "channel", required = false)
     private Channel mChannel;
 
     public String getVersion() {
