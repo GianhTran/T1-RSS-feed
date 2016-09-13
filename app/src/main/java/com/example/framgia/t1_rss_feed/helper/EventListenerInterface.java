@@ -11,4 +11,32 @@ public class EventListenerInterface {
     public interface OnItemNewsClickListener {
         void onItemNewsClick(long itemId, int position);
     }
+
+    /**
+     * handler check box click listener
+     */
+    public interface OnItemCheckListener {
+        void onItemCheck(long itemId, Boolean isChecked);
+    }
+
+    /**
+     * handle button cancel clear event
+     */
+    public interface OnCancelListener {
+        void onCancel();
+    }
+
+    /**
+     * handle button  clear event
+     */
+    public interface OnClearListener {
+        void onClear();
+    }
+
+    /**
+     * handle show/hide edit mode
+     */
+    public interface OnEditModeListener {
+        void onEditMode(Boolean isEdit);
+    }
 }

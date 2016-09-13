@@ -57,6 +57,7 @@ public class NewsItem extends RealmObject implements Parcelable {
     private Long mIndex;
     private Long mReadTime;
     private Long mHistoryIndex;
+    private Boolean mIsChecked;
 
     public NewsItem() {
     }
@@ -90,6 +91,14 @@ public class NewsItem extends RealmObject implements Parcelable {
             .equalTo(Constants.KEY_VIEWED, true)
             .findAllSorted(Constants.KEY_HISTORY_INDEX, Sort.ASCENDING);
         return newsItems.isEmpty() ? 0 : newsItems.last().getHistoryIndex() + 1;
+    }
+
+    public Boolean getChecked() {
+        return mIsChecked;
+    }
+
+    public void setChecked(Boolean checked) {
+        mIsChecked = checked;
     }
 
     public Long getReadTime() {
