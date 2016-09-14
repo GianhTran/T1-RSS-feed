@@ -39,6 +39,7 @@
     <string name="text_end_time">end time</string>
     <string name="text_choice_time">choice time to clear history</string>
     <string name="text_clear">clear</string>
+    <string name="text_user_online">User online:</string>
     <!-- spinner data -->
     <string-array name="channel_arrays">
         <item>Asia - Voice of America</item>

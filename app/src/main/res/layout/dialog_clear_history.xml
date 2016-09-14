@@ -65,8 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_small"
                 android:layout_marginStart="@dimen/dimen_small"
-                android:background="@drawable/bg_new_tag"
-                android:src="@drawable/ic_calendar"/>
+                android:background="@drawable/bg_new_tag"/>
 
             <TextView
                 android:id="@+id/text_end_time"
@@ -82,8 +81,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_small"
                 android:layout_marginStart="@dimen/dimen_small"
-                android:background="@drawable/bg_new_tag"
-                android:src="@drawable/ic_calendar"/>
+                android:background="@drawable/bg_new_tag"/>
         </LinearLayout>
 
         <View

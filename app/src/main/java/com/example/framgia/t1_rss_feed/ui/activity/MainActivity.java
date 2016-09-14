@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.example.framgia.t1_rss_feed.BaseActivity;
 import com.example.framgia.t1_rss_feed.Constants;
@@ -16,6 +17,10 @@ import com.example.framgia.t1_rss_feed.ui.dialog.SettingsDialog;
 import com.example.framgia.t1_rss_feed.ui.fragment.DetailFragment;
 import com.example.framgia.t1_rss_feed.ui.fragment.HomeFragment;
 import com.example.framgia.t1_rss_feed.util.DateTimeUtil;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -28,13 +33,17 @@ import io.realm.RealmResults;
  * Created by GianhTNS on 23/08/2016.
  */
 public class MainActivity extends BaseActivity {
+    private TextView mTvUserOnlineCount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (Preferences.with(this).getStyle() == Constants.DARK_STYLE)
             setTheme(R.style.AppThemeDark_NoActionBar);
         setContentView(R.layout.activity_main);
+        mTvUserOnlineCount = (TextView) findViewById(R.id.text_user_count);
         notifyData();
+        handleUserCount();
     }
 
     @Override
@@ -109,5 +118,41 @@ public class MainActivity extends BaseActivity {
             changeFragment(R.id.frame_container, HomeFragment.newInstance(),
                 Constants.FRAGMENT_TAG);
         }
+    }
+
+    /**
+     * method using fire base to get number of user is online
+     */
+    public void handleUserCount() {
+        Firebase listRef = new Firebase(Constants.FIRE_BASE_URL + Constants.FIRE_BASE_PRESENCE);
+        final Firebase userRef = listRef.push();
+        // Add ourselves to presence list when online.
+        Firebase presenceRef =
+            new Firebase(Constants.FIRE_BASE_URL + Constants.FIRE_BASE_INFOR);
+        ValueEventListener myPresence = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                // Remove ourselves when we disconnect.
+                userRef.onDisconnect().removeValue();
+                userRef.setValue(true);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        };
+        presenceRef.addValueEventListener(myPresence);
+        // Number of online users is the number of objects in the presence list.
+        ValueEventListener myList = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                mTvUserOnlineCount.setText(String.valueOf(snapshot.getChildrenCount()));
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        };
+        listRef.addValueEventListener(myList);
     }
 }
