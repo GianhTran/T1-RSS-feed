@@ -32,6 +32,13 @@
     <string name="text_size_small">S</string>
     <string name="text_size_medium">M</string>
     <string name="text_size_large">L</string>
+    <string name="menu_clear_all_history">clear all history</string>
+    <string name="menu_select_history">select history</string>
+    <string name="text_clear_all">clear all</string>
+    <string name="text_start_time">start time</string>
+    <string name="text_end_time">end time</string>
+    <string name="text_choice_time">choice time to clear history</string>
+    <string name="text_clear">clear</string>
     <!-- spinner data -->
     <string-array name="channel_arrays">
         <item>Asia - Voice of America</item>
