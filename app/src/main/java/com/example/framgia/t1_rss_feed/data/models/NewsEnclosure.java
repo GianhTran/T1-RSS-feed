@@ -10,11 +10,11 @@ import io.realm.RealmObject;
  */
 public class NewsEnclosure extends RealmObject {
     private String mId;
-    @Attribute(name = "url")
+    @Attribute(name = "url", required = false)
     private String mLinkEnclosure;
-    @Attribute(name = "length")
+    @Attribute(name = "length", required = false)
     private String mLength;
-    @Attribute(name = "type")
+    @Attribute(name = "type", required = false)
     private String mType;
 
     public NewsEnclosure() {

@@ -9,11 +9,11 @@ import org.simpleframework.xml.Root;
  */
 @Root(strict = false)
 public class NewsImage {
-    @Element(name = "title")
+    @Element(name = "title", required = false)
     private String mTitle;
     @Element(name = "link", required = false)
     private String mLinkImage;
-    @Element(name = "url")
+    @Element(name = "url", required = false)
     private String mUrl;
 
     public String getTitle() {
