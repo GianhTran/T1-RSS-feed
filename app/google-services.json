@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "501470255479",
+    "firebase_url": "https://rss-feed-fef98.firebaseio.com",
+    "project_id": "rss-feed-fef98",
+    "storage_bucket": "rss-feed-fef98.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:501470255479:android:302ddad6bba02ef2",
+        "android_client_info": {
+          "package_name": "com.example.framgia.t1_rss_feed"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "501470255479-auarjitjknbtpl6gm3t6g1eicqds2bep.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.framgia.t1_rss_feed",
+            "certificate_hash": "622EA1E6F7B745A5AF994DA11B290DC789D2B9A1"
+          }
+        },
+        {
+          "client_id": "501470255479-9sg27lh6qnd61kp89gmfuti5rt5k8d8l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQG_XxQ0OhUWDxOIKAu0Gvd1QDH5Yc3t4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "501470255479-9sg27lh6qnd61kp89gmfuti5rt5k8d8l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

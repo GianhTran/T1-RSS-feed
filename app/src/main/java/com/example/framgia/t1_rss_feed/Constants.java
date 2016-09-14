@@ -67,4 +67,8 @@ public class Constants {
     public static final int TEXT_SIZE_SMALL = 2;
     public static final int TEXT_SIZE_MEDIUM = 3;
     public static final int TEXT_SIZE_LARGE = 4;
+    // fire base url
+    public static final String FIRE_BASE_URL = "https://rss-feed-fef98.firebaseio.com";
+    public static final String FIRE_BASE_PRESENCE = "/presence/";
+    public static final String FIRE_BASE_INFOR = "/.info/connected";
 }
