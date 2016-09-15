@@ -14,26 +14,26 @@ import java.util.List;
  */
 @Root(name = "channel", strict = false)
 public class Channel {
-    @Element(name = "title")
+    @Element(name = "title", required = false)
     private String mTitle;
-    @Element(name = "description")
+    @Element(name = "description", required = false)
     private String mDescription;
     @Path("link")
     @Text(required = false)
     private String mLinkChannel;
-    @Element(name = "lastBuildDate")
+    @Element(name = "lastBuildDate", required = false)
     private String mLastBuildDate;
-    @Element(name = "generator")
+    @Element(name = "generator", required = false)
     private String mGenerator;
-    @Element(name = "language")
+    @Element(name = "language", required = false)
     private String mLanguage;
-    @Element(name = "copyright")
+    @Element(name = "copyright", required = false)
     private String mCopyright;
-    @Element(name = "ttl")
+    @Element(name = "ttl", required = false)
     private String mTtl;
-    @ElementList(entry = "item", inline = true)
+    @ElementList(entry = "item", inline = true, required = false)
     private List<NewsItem> mItems;
-    @Element(name = "image")
+    @Element(name = "image", required = false)
     private NewsImage mImage;
 
     public NewsImage getImage() {

@@ -39,6 +39,9 @@ public class Constants {
     public static final int ONE_MINUTE_FEATURE_CHANNEL = 8;
     public static final int EXTREME_CHANNEL = 9;
     public static final int PHOTO_CHANNEL = 10;
+    // tinh te
+    public static final String TINHTE_CHANNEL_NAME = "Tinhte.vn";
+    public static final String TINHTE_CHANNEL_LINK = "https://tinhte.vn/rss";
     // pdf settings
     public static final String PDF_TITLE = "news_";
     public static final String PDF_TYPE = ".pdf";
