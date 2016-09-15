@@ -14,6 +14,7 @@ public class Constants {
     public static final String INTENT_KEY_NEWS_ITEM = "intent_key_news_item";
     public static final String DATE_TIME_FORMAT = "yyyyMMdd_HHmmss";
     public static final String INTENT_KEY_NEWS_ITEM_ID = "intent_key_news_item_id";
+    public static final String INTENT_KEY_LINK = "intent_key_link";
     public static final int SERVICE_REQUEST_CODE = 0;
     public static final int SERVICE_FLAG = 0;
     public static final int TOP_POSITION = 0;
@@ -27,6 +28,9 @@ public class Constants {
     public static final Long DEF_HISTOTY_INDEX_VALUE = -1L;
     public static final String INTENT_OPEN_PDF_TYPE = "application/pdf";
     public static final int SAME_DAY = 0;
+    public static final Long VALUE_OF_NEW_NEWS = -1L;
+    public static final String HTTP = "http://";
+    public static final String HTTPS = "https://";
     // channel ID
     public static final int ASIAN_CHANNEL = 0;
     public static final int USA_CHANNEL = 1;

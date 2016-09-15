@@ -26,6 +26,7 @@ public class SettingsDialog extends Dialog {
     private RadioButton mRadioButtonDarkStyle;
     private RadioGroup mRadioGroupTextSize;
     private CheckBox mCheckBoxSetting;
+    private CheckBox mCheckBoxSubTopic;
     private Preferences mPreferences;
 
     public SettingsDialog(Context context) {
@@ -48,12 +49,14 @@ public class SettingsDialog extends Dialog {
             (RadioButton) findViewById(R.id.radio_button_medium);
         RadioButton radioButtonTextSizeLarge = (RadioButton) findViewById(R.id.radio_button_large);
         mCheckBoxSetting = (CheckBox) findViewById(R.id.check_box_setting);
+        mCheckBoxSubTopic = (CheckBox) findViewById(R.id.check_box_sub_topic);
         mRadioGroupTextSize = (RadioGroup) findViewById(R.id.radio_group_setting_size);
         // set state
         radioButtonLightStyle.setChecked(true);
         mPreferences = Preferences.with(mAppCompatActivity);
         if (mPreferences.getStyle() == Constants.DARK_STYLE) mRadioButtonDarkStyle.setChecked(true);
         mCheckBoxSetting.setChecked(mPreferences.getAllowImage());
+        mCheckBoxSubTopic.setChecked(mPreferences.getSubTopic());
         switch (mPreferences.getTextSize()) {
             case Constants.TEXT_SIZE_SMALL:
                 radioButtonTextSizeSmall.setChecked(true);
@@ -72,6 +75,7 @@ public class SettingsDialog extends Dialog {
             @Override
             public void onClick(View view) {
                 mPreferences.setAllowImage(mCheckBoxSetting.isChecked());
+                mPreferences.setSubTopic(mCheckBoxSubTopic.isChecked());
                 mPreferences.setStyle(
                     (mRadioButtonDarkStyle.isChecked()) ? Constants.DARK_STYLE :
                         Constants.LIGHT_STYLE

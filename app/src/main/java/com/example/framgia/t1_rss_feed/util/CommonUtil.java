@@ -1,6 +1,7 @@
 package com.example.framgia.t1_rss_feed.util;
 
 import android.support.v7.app.AppCompatActivity;
+import android.util.Patterns;
 
 /**
  * Copyright @ 2016 Framgia inc
@@ -22,5 +23,12 @@ public class CommonUtil {
             activity.getSupportActionBar().setDisplayShowHomeEnabled(hasBackButton);
             activity.getSupportActionBar().setDisplayShowTitleEnabled(hasTittle);
         }
+    }
+
+    /**
+     * Check valid link
+     */
+    private static Boolean checkLink(String link) {
+        return Patterns.WEB_URL.matcher(link).matches();
     }
 }

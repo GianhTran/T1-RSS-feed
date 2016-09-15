@@ -49,6 +49,8 @@ dependencies {
     compile 'io.realm:android-adapters:1.3.0'
     // CardView
     compile 'com.android.support:cardview-v7:23.3.0'
-    //firebase
+    //firebase data base
     compile 'com.firebase:firebase-client-android:2.5.2'
+    //fire base message
+    compile 'com.google.firebase:firebase-messaging:9.0.0'
 }

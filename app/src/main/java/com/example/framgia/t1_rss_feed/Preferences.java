@@ -13,6 +13,7 @@ public class Preferences {
     private static final String PRE_STYLE = "pref_style";
     private static final String PRE_ALLOW_IMAGE = "pref_allow_image";
     private static final String PRE_TEXT_SIZE = "pref_text_size";
+    private static final String PRE_SUB_TOPIC = "pref_sub_topic";
     private static final String PREFS_NAME = "prefs";
     private static Preferences sInstance;
     private final SharedPreferences SHARE_PREFERENCES;
@@ -77,5 +78,16 @@ public class Preferences {
 
     public int getTextSize() {
         return SHARE_PREFERENCES.getInt(PRE_TEXT_SIZE, Constants.TEXT_SIZE_MEDIUM);
+    }
+
+    // isSub ? allow receiver notification : deny
+    public void setSubTopic(Boolean isSub) {
+        SHARE_PREFERENCES.edit()
+            .putBoolean(PRE_SUB_TOPIC, isSub)
+            .apply();
+    }
+
+    public Boolean getSubTopic() {
+        return SHARE_PREFERENCES.getBoolean(PRE_SUB_TOPIC, true);
     }
 }
