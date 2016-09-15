@@ -15,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -80,6 +81,12 @@ public class DetailFragment extends BaseFragment {
         return detailFragment;
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -93,6 +100,14 @@ public class DetailFragment extends BaseFragment {
         new LoadNewsDetailAsyncTask(getArguments().getLong(Constants.INTENT_KEY_NEWS_ITEM_ID))
             .execute();
         return view;
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        if (mIsHomeDetail) return;
+        menu.findItem(R.id.action_clear_all_history).setVisible(false);
+        menu.findItem(R.id.action_select).setVisible(false);
+        super.onPrepareOptionsMenu(menu);
     }
 
     private void initView(View view) {
