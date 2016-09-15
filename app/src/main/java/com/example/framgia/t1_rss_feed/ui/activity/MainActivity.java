@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.IntentCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -25,8 +26,8 @@ import com.example.framgia.t1_rss_feed.ui.dialog.AddMoreRssDialog;
 import com.example.framgia.t1_rss_feed.ui.dialog.SettingsDialog;
 import com.example.framgia.t1_rss_feed.ui.fragment.DetailFragment;
 import com.example.framgia.t1_rss_feed.ui.fragment.HomeFragment;
-import com.example.framgia.t1_rss_feed.ui.view.DividerItemDecoration;
 import com.example.framgia.t1_rss_feed.ui.fragment.WeatherFragment;
+import com.example.framgia.t1_rss_feed.ui.view.DividerItemDecoration;
 import com.example.framgia.t1_rss_feed.util.DateTimeUtil;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -46,10 +47,12 @@ import io.realm.RealmResults;
 public class MainActivity extends BaseActivity
     implements EventListenerInterface.OnMenuItemClickListener,
     EventListenerInterface.OnClickAddRssListener,
+    EventListenerInterface.OnSubmitSettingsListener,
     EventListenerInterface.OnSubmitAddRssListener {
     private DrawerLayout mDrawerLayout;
     private Realm mRealm;
     private MenuAdapter mMenuAdapter;
+    private Firebase mUserRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,6 +159,16 @@ public class MainActivity extends BaseActivity
             .findAll());
     }
 
+    @Override
+    public void onSubmitSettings() {
+        mUserRef.removeValue();
+        Intent mainIntent = IntentCompat.makeRestartActivityTask(this.getPackageManager()
+            .getLaunchIntentForPackage(this.getPackageName())
+            .getComponent())
+            .setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        this.startActivity(mainIntent);
+    }
+
     private class RefineData extends AsyncTask<Void, Void, Void> {
         private Date mDeadline;
 
@@ -198,7 +211,7 @@ public class MainActivity extends BaseActivity
      */
     public void handleUserCount() {
         Firebase listRef = new Firebase(Constants.FIRE_BASE_URL + Constants.FIRE_BASE_PRESENCE);
-        final Firebase userRef = listRef.push();
+        mUserRef = listRef.push();
         // Add ourselves to presence list when online.
         Firebase presenceRef =
             new Firebase(Constants.FIRE_BASE_URL + Constants.FIRE_BASE_INFOR);
@@ -206,8 +219,8 @@ public class MainActivity extends BaseActivity
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 // Remove ourselves when we disconnect.
-                userRef.onDisconnect().removeValue();
-                userRef.setValue(true);
+                mUserRef.onDisconnect().removeValue();
+                mUserRef.setValue(true);
             }
 
             @Override
@@ -220,6 +233,7 @@ public class MainActivity extends BaseActivity
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 //todo set user count = String.valueOf(snapshot.getChildrenCount()));
+                getSupportActionBar().setTitle(String.valueOf(snapshot.getChildrenCount()));
             }
 
             @Override

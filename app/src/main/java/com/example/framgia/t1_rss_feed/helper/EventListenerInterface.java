@@ -41,6 +41,13 @@ public class EventListenerInterface {
     }
 
     /**
+     * submit settings listener
+     */
+    public interface OnSubmitSettingsListener {
+        void onSubmitSettings();
+    }
+
+    /**
      * handle menu click listener
      */
     public interface OnMenuItemClickListener {
