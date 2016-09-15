@@ -4,18 +4,28 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.example.framgia.t1_rss_feed.BaseActivity;
 import com.example.framgia.t1_rss_feed.Constants;
 import com.example.framgia.t1_rss_feed.Preferences;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
+import com.example.framgia.t1_rss_feed.data.models.RssSource;
+import com.example.framgia.t1_rss_feed.helper.EventListenerInterface;
+import com.example.framgia.t1_rss_feed.ui.adapter.MenuAdapter;
+import com.example.framgia.t1_rss_feed.ui.dialog.AddMoreRssDialog;
 import com.example.framgia.t1_rss_feed.ui.dialog.SettingsDialog;
 import com.example.framgia.t1_rss_feed.ui.fragment.DetailFragment;
 import com.example.framgia.t1_rss_feed.ui.fragment.HomeFragment;
+import com.example.framgia.t1_rss_feed.ui.view.DividerItemDecoration;
 import com.example.framgia.t1_rss_feed.util.DateTimeUtil;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -32,8 +42,13 @@ import io.realm.RealmResults;
  * Copyright @ 2016 Framgia inc
  * Created by GianhTNS on 23/08/2016.
  */
-public class MainActivity extends BaseActivity {
-    private TextView mTvUserOnlineCount;
+public class MainActivity extends BaseActivity
+    implements EventListenerInterface.OnMenuItemClickListener,
+    EventListenerInterface.OnClickAddRssListener,
+    EventListenerInterface.OnSubmitAddRssListener {
+    private DrawerLayout mDrawerLayout;
+    private Realm mRealm;
+    private MenuAdapter mMenuAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +56,38 @@ public class MainActivity extends BaseActivity {
         if (Preferences.with(this).getStyle() == Constants.DARK_STYLE)
             setTheme(R.style.AppThemeDark_NoActionBar);
         setContentView(R.layout.activity_main);
-        mTvUserOnlineCount = (TextView) findViewById(R.id.text_user_count);
+        mRealm = Realm.getDefaultInstance();
+        initNavigationDrawer();
         notifyData();
         handleUserCount();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mRealm.close();
+    }
+
+    private void initNavigationDrawer() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_home);
+        RecyclerView recyclerViewMenu = (RecyclerView) findViewById(R.id.recycler_menu);
+        setSupportActionBar(toolbar);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_home);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,
+            mDrawerLayout,
+            toolbar,
+            R.string.app_name,
+            R.string.app_title);
+        mDrawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+        RealmResults<RssSource> menuItems = mRealm.where(RssSource.class)
+            .equalTo(Constants.RSS_ACTIVE, true)
+            .findAll();
+        recyclerViewMenu.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewMenu.addItemDecoration(new DividerItemDecoration(this,
+            DividerItemDecoration.VERTICAL_LIST));
+        mMenuAdapter = new MenuAdapter(this, menuItems);
+        recyclerViewMenu.setAdapter(mMenuAdapter);
     }
 
     @Override
@@ -67,6 +111,10 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            return;
+        }
         Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_container);
         if (fragment instanceof DetailFragment) {
             getFragmentManager().popBackStack();
@@ -81,6 +129,27 @@ public class MainActivity extends BaseActivity {
         cal.add(Calendar.DAY_OF_YEAR, Constants.NUMBER_OF_KEEP_DATE);
         Date deadLine = cal.getTime();
         new RefineData(deadLine).execute();
+    }
+
+    @Override
+    public void onMenuItemClick(int rssId) {
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        changeFragment(R.id.frame_container,
+            HomeFragment.newInstance(rssId),
+            Constants.FRAGMENT_TAG);
+    }
+
+    @Override
+    public void onClickAddRss() {
+        new AddMoreRssDialog(this).show();
+    }
+
+    @Override
+    public void onSubmitAddRss(String name, String link) {
+        saveRssSource(name, link);
+        mMenuAdapter.updateData(mRealm.where(RssSource.class)
+            .equalTo(Constants.RSS_ACTIVE, true)
+            .findAll());
     }
 
     private class RefineData extends AsyncTask<Void, Void, Void> {
@@ -115,7 +184,7 @@ public class MainActivity extends BaseActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            changeFragment(R.id.frame_container, HomeFragment.newInstance(),
+            changeFragment(R.id.frame_container, HomeFragment.newInstance(getBaseRssId()),
                 Constants.FRAGMENT_TAG);
         }
     }
@@ -146,7 +215,7 @@ public class MainActivity extends BaseActivity {
         ValueEventListener myList = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                mTvUserOnlineCount.setText(String.valueOf(snapshot.getChildrenCount()));
+                //todo set user count = String.valueOf(snapshot.getChildrenCount()));
             }
 
             @Override
@@ -154,5 +223,40 @@ public class MainActivity extends BaseActivity {
             }
         };
         listRef.addValueEventListener(myList);
+    }
+
+    /**
+     * method using get rss id default
+     *
+     * @return id of first rss in database
+     */
+    private int getBaseRssId() {
+        RssSource rssSource = mRealm.where(RssSource.class)
+            .equalTo(Constants.RSS_ACTIVE, true)
+            .findFirst();
+        if (rssSource != null) return rssSource.getId();
+        return Constants.DEFAULT_RSS_ID;
+    }
+
+    /**
+     * method using save rss source
+     *
+     * @param name name of rss
+     * @param link link to rss
+     */
+    private void saveRssSource(final String name, final String link) {
+        final int id = new RssSource().getNextPrimaryKey(mRealm);
+        mRealm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RssSource rssSource = mRealm.createObject(RssSource.class);
+                rssSource.setId(id);
+                rssSource.setRssLink(link);
+                rssSource.setRssName(name);
+                rssSource.setActive(true);
+                rssSource.setDefault(false);
+            }
+        });
+        ;
     }
 }

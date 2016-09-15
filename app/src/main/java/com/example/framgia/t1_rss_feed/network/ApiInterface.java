@@ -4,6 +4,7 @@ import com.example.framgia.t1_rss_feed.data.models.News;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Url;
 
 /**
  * Copyright @ 2016 Framgia inc
@@ -32,4 +33,5 @@ public interface ApiInterface {
     Call<News> loadNewsOfExtremismWatch();
     @GET("z$-jqetv-i")
     Call<News> loadNewsOfDayInPhotos();
+    Call<News> getCustomFeed(@Url String url);
 }
