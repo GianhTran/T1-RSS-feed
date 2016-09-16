@@ -39,4 +39,25 @@ public class EventListenerInterface {
     public interface OnEditModeListener {
         void onEditMode(Boolean isEdit);
     }
+
+    /**
+     * handle menu click listener
+     */
+    public interface OnMenuItemClickListener {
+        void onMenuItemClick(int rssId);
+    }
+
+    /**
+     * handle button click add rss event
+     */
+    public interface OnClickAddRssListener {
+        void onClickAddRss();
+    }
+
+    /**
+     * handle event submit add rss event from dialog
+     */
+    public interface OnSubmitAddRssListener {
+        void onSubmitAddRss(String name, String link);
+    }
 }

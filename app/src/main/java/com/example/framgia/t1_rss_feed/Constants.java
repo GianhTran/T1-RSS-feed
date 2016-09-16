@@ -31,6 +31,7 @@ public class Constants {
     public static final Long VALUE_OF_NEW_NEWS = -1L;
     public static final String HTTP = "http://";
     public static final String HTTPS = "https://";
+    public static final int DEFAULT_RSS_ID = -1;
     // channel ID
     public static final int ASIAN_CHANNEL = 0;
     public static final int USA_CHANNEL = 1;
@@ -66,6 +67,8 @@ public class Constants {
     public static final String KEY_READ_TIME = "mReadTime";
     public static final String KEY_HISTORY_INDEX = "mHistoryIndex";
     public static final String KEY_CHECKED = "mIsChecked";
+    public static final String RSS_ACTIVE = "mIsActive";
+    public static final String KEY_RSS_ID = "key_rss_id";
     // realm config
     public static final String MY_REALM_NAME = "my_realm.realm";
     // settings value

@@ -41,6 +41,12 @@
     <string name="text_clear">clear</string>
     <string name="text_user_online">User online:</string>
     <string name="text_allow_notification">Allow notification:</string>
+    <string name="msg_name_empty">rss name can not be empty</string>
+    <string name="msg_link_empty">rss link can not be empty</string>
+    <string name="msg_link_incorrect">link is incorrect</string>
+    <string name="text_rss_link">Rss link</string>
+    <string name="text_rss_name">Rss name</string>
+    <string name="text_add_more_channel">add more channel</string>
     <!-- spinner data -->
     <string-array name="channel_arrays">
         <item>Asia - Voice of America</item>

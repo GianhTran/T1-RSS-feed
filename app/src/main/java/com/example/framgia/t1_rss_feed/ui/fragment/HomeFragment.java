@@ -61,8 +61,12 @@ public class HomeFragment extends BaseFragment
     private Boolean mIsLoadMore = true;
     private CoordinatorLayout mCoordinatorLayout;
 
-    public static HomeFragment newInstance() {
-        return new HomeFragment();
+    public static HomeFragment newInstance(int rssId) {
+        HomeFragment homeFragment = new HomeFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constants.KEY_RSS_ID, rssId);
+        homeFragment.setArguments(bundle);
+        return homeFragment;
     }
 
     @Override
@@ -76,7 +80,6 @@ public class HomeFragment extends BaseFragment
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mRealm = Realm.getDefaultInstance();
-        initToolbar();
         initView(view);
         handleEvent();
         initRecyclerView();
