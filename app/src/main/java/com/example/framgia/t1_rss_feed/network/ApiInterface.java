@@ -1,9 +1,11 @@
 package com.example.framgia.t1_rss_feed.network;
 
 import com.example.framgia.t1_rss_feed.data.models.News;
+import com.example.framgia.t1_rss_feed.data.models.WeatherWrapper;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Query;
 import retrofit2.http.Url;
 
 /**
@@ -33,5 +35,9 @@ public interface ApiInterface {
     Call<News> loadNewsOfExtremismWatch();
     @GET("z$-jqetv-i")
     Call<News> loadNewsOfDayInPhotos();
+    @GET("weather")
+    Call<WeatherWrapper> loadWeather(@Query("apikey") String apiKey,
+                                     @Query("lat") long lat,
+                                     @Query("lon") long lon);
     Call<News> getCustomFeed(@Url String url);
 }

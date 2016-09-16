@@ -31,6 +31,7 @@ public class Constants {
     public static final Long VALUE_OF_NEW_NEWS = -1L;
     public static final String HTTP = "http://";
     public static final String HTTPS = "https://";
+    public static final String EMPTY_STRING = "";
     public static final int DEFAULT_RSS_ID = -1;
     // channel ID
     public static final int ASIAN_CHANNEL = 0;
@@ -81,4 +82,16 @@ public class Constants {
     public static final String FIRE_BASE_URL = "https://rss-feed-fef98.firebaseio.com";
     public static final String FIRE_BASE_PRESENCE = "/presence/";
     public static final String FIRE_BASE_INFOR = "/.info/connected";
+    // api KEY of open weather map
+    public static final String WEATHER_API_KEY = "1472edc8ae6d96af07549c89efe13930";
+    // base url or weather api
+    public static final String WEATHER_BASE_LINK = "http://api.openweathermap.org/data/2.5/";
+    //weather icon
+    public static final int WEATHER_THUNDER = 2;
+    public static final int WEATHER_DRIZZLE = 3;
+    public static final int WEATHER_FOGGY = 7;
+    public static final int WEATHER_CLOUDY = 4;
+    public static final int WEATHER_SNOWY = 6;
+    public static final int WEATHER_RAINY = 5;
+    public static final int WEATHER_SUNNY = 8;
 }
