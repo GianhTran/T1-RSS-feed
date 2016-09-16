@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 /**
@@ -24,6 +25,16 @@ public class ServiceGenerator {
 
     public static <S> S createService(Class<S> serviceClass) {
         Retrofit retrofit = builder.client(httpClient.build()).build();
+        return retrofit.create(serviceClass);
+    }
+
+    private static Retrofit.Builder jSonBuilder =
+        new Retrofit.Builder()
+            .baseUrl(Constants.WEATHER_BASE_LINK)
+            .addConverterFactory(GsonConverterFactory.create());
+
+    public static <S> S createGsonService(Class<S> serviceClass) {
+        Retrofit retrofit = jSonBuilder.client(httpClient.build()).build();
         return retrofit.create(serviceClass);
     }
 }

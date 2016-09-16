@@ -26,6 +26,7 @@ import com.example.framgia.t1_rss_feed.ui.dialog.SettingsDialog;
 import com.example.framgia.t1_rss_feed.ui.fragment.DetailFragment;
 import com.example.framgia.t1_rss_feed.ui.fragment.HomeFragment;
 import com.example.framgia.t1_rss_feed.ui.view.DividerItemDecoration;
+import com.example.framgia.t1_rss_feed.ui.fragment.WeatherFragment;
 import com.example.framgia.t1_rss_feed.util.DateTimeUtil;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -60,6 +61,9 @@ public class MainActivity extends BaseActivity
         initNavigationDrawer();
         notifyData();
         handleUserCount();
+        changeFragment(R.id.frame_container_weather,
+            WeatherFragment.newInstance(),
+            Constants.FRAGMENT_TAG);
     }
 
     @Override

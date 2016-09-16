@@ -1,10 +1,20 @@
 <resources>
     <string name="app_name">NEWs online</string>
     <string name="font_material_icon">fonts/Material-Design-Iconic-Font.ttf</string>
+    <string name="font_weather">fonts/weather.ttf</string>
     <!-- Font Icon Code -->
     <string name="ic_view">&#xf27d;</string>
     <string name="ic_share">&#xf35b;</string>
     <string name="ic_export">&#xf1b0;</string>
+    <string name="weather_sunny">&#xf00d;</string>
+    <string name="weather_clear_night">&#xf02e;</string>
+    <string name="weather_foggy">&#xf014;</string>
+    <string name="weather_cloudy">&#xf013;</string>
+    <string name="weather_rainy">&#xf019;</string>
+    <string name="weather_snowy">&#xf01b;</string>
+    <string name="weather_thunder">&#xf01e;</string>
+    <string name="weather_drizzle">&#xf01c;</string>
+
     <!-- project string -->
     <string name="title_prompt">Choose a channel</string>
     <string name="msg_data_empty">data empty</string>
@@ -14,6 +24,7 @@
     <string name="msg_read_more">click to readmore</string>
     <string name="msg_update_error">oops ! can not update latest news, plz check your
         connect!</string>
+    <string name="msg_update_weather">oops can not update weather</string>
     <string name="msg_has_news">we have news for you! </string>
     <string name="msg_export_pdf_error">opps! export PDF fail</string>
     <string name="msg_export_pdf_success">export PDF file success!</string>
@@ -47,6 +58,8 @@
     <string name="text_rss_link">Rss link</string>
     <string name="text_rss_name">Rss name</string>
     <string name="text_add_more_channel">add more channel</string>
+    <string name="text_today">Today</string>
+    <string name="text_temp">%s °F</string>
     <!-- spinner data -->
     <string-array name="channel_arrays">
         <item>Asia - Voice of America</item>
