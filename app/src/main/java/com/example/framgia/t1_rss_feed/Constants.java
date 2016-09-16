@@ -94,4 +94,10 @@ public class Constants {
     public static final int WEATHER_SNOWY = 6;
     public static final int WEATHER_RAINY = 5;
     public static final int WEATHER_SUNNY = 8;
+    // google location
+    public static final Byte REQUEST_CHECK_SETTINGS = 0x1;
+    public static final Long UPDATE_INTERVAL_IN_MILLISECONDS = 10000L;
+    public static final Long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
+        UPDATE_INTERVAL_IN_MILLISECONDS / 2;
+    public static final int REQUEST_CODE_GRANT_PERMISSION = 113;
 }

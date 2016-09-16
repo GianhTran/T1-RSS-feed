@@ -54,4 +54,6 @@ dependencies {
     compile 'com.firebase:firebase-client-android:2.5.2'
     //fire base message
     compile 'com.google.firebase:firebase-messaging:9.0.0'
+    // google location
+    compile 'com.google.android.gms:play-services-location:9.0.0'
 }
