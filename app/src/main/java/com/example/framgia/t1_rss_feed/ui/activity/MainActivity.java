@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -47,8 +48,10 @@ import io.realm.RealmResults;
 public class MainActivity extends BaseActivity
     implements EventListenerInterface.OnMenuItemClickListener,
     EventListenerInterface.OnClickAddRssListener,
-    EventListenerInterface.OnSubmitSettingsListener,
-    EventListenerInterface.OnSubmitAddRssListener {
+    EventListenerInterface.OnSubmitAddRssListener,
+    EventListenerInterface.OnSetTitleListener,
+    EventListenerInterface.OnRemoveRssListener,
+    EventListenerInterface.OnSubmitSettingsListener {
     private DrawerLayout mDrawerLayout;
     private Realm mRealm;
     private MenuAdapter mMenuAdapter;
@@ -160,6 +163,19 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
+    public void onSetTittle(String tittle) {
+        getSupportActionBar().setTitle(tittle);
+    }
+
+    @Override
+    public void onRemoveRss(int id) {
+        deleteRssSource(id);
+        mMenuAdapter.updateData(mRealm.where(RssSource.class)
+            .equalTo(Constants.RSS_ACTIVE, true)
+            .findAll());
+    }
+
+    @Override
     public void onSubmitSettings() {
         mUserRef.removeValue();
         Intent mainIntent = IntentCompat.makeRestartActivityTask(this.getPackageManager()
@@ -233,7 +249,6 @@ public class MainActivity extends BaseActivity
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 //todo set user count = String.valueOf(snapshot.getChildrenCount()));
-                getSupportActionBar().setTitle(String.valueOf(snapshot.getChildrenCount()));
             }
 
             @Override
@@ -275,6 +290,18 @@ public class MainActivity extends BaseActivity
                 rssSource.setDefault(false);
             }
         });
-        ;
+    }
+
+    private void deleteRssSource(final int id) {
+        mRealm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RssSource rssSource = mRealm.where(RssSource.class)
+                    .equalTo(Constants.KEY_ID, id)
+                    .findFirst();
+                if (!rssSource.getDefault())
+                    rssSource.deleteFromRealm();
+            }
+        });
     }
 }

@@ -1,6 +1,7 @@
 package com.example.framgia.t1_rss_feed.ui.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,11 +24,13 @@ public class MenuAdapter extends RealmRecyclerViewAdapter<RssSource, RecyclerVie
     private final int VIEW_TYPE_BUTTON = 2;
     private EventListenerInterface.OnMenuItemClickListener mMenuItemClickListener;
     private EventListenerInterface.OnClickAddRssListener mAddRssListener;
+    private EventListenerInterface.OnRemoveRssListener mRemoveRssListener;
 
     public MenuAdapter(Context context, RealmResults<RssSource> menuItems) {
         super(context, menuItems, false);
         this.mMenuItemClickListener = (EventListenerInterface.OnMenuItemClickListener) context;
         this.mAddRssListener = (EventListenerInterface.OnClickAddRssListener) context;
+        this.mRemoveRssListener = (EventListenerInterface.OnRemoveRssListener) context;
     }
 
     @Override
@@ -82,6 +85,16 @@ public class MenuAdapter extends RealmRecyclerViewAdapter<RssSource, RecyclerVie
                 @Override
                 public void onClick(View view) {
                     mMenuItemClickListener.onMenuItemClick(item.getId());
+                }
+            });
+            if (item.getDefault())
+                itemView.setBackgroundColor(ContextCompat.getColor(context,
+                    R.color.backgroundColor));
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    mRemoveRssListener.onRemoveRss(item.getId());
+                    return true;
                 }
             });
         }

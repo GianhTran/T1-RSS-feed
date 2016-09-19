@@ -67,4 +67,18 @@ public class EventListenerInterface {
     public interface OnSubmitAddRssListener {
         void onSubmitAddRss(String name, String link);
     }
+
+    /**
+     * handle event set title
+     */
+    public interface OnSetTitleListener {
+        void onSetTittle(String tittle);
+    }
+
+    /**
+     * handle delete rss listener
+     */
+    public interface OnRemoveRssListener {
+        void onRemoveRss(int id);
+    }
 }

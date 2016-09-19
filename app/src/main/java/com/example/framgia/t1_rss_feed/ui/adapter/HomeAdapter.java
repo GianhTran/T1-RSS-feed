@@ -3,6 +3,7 @@ package com.example.framgia.t1_rss_feed.ui.adapter;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -107,7 +108,7 @@ public class HomeAdapter extends RealmRecyclerViewAdapter<NewsItem, RecyclerView
                 DateTimeUtil.formatDateToString(new Date()),
                 DateTimeUtil.SECOND_FORMAT) == Constants.SAME_DAY);
             mNew.setVisibility((isNEW && !item.getViewed()) ? View.VISIBLE : View.GONE);
-            mTvContent.setText(item.getDescription());
+            mTvContent.setText(Html.fromHtml(item.getDescription()));
             mTvTime.setText(item.getPubDate());
             mTvTitle.setText(item.getTitle());
             itemView.setBackgroundColor(ContextCompat.getColor(context,

@@ -3,15 +3,7 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/backgroundColor">
-
-    <Spinner
-        android:id="@+id/spinner_channel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:entries="@array/channel_arrays"
-        android:prompt="@string/title_prompt"/>
+                android:background="@android:color/white">
 
     <TextView
         android:id="@+id/text_no_data"
@@ -26,7 +18,7 @@
         android:id="@+id/coordinator_home"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/spinner_channel">
+        android:layout_alignParentTop="true">
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipe_refresh_home"

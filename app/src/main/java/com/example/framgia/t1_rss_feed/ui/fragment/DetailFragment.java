@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -94,7 +95,6 @@ public class DetailFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         mDetailFragment = this;
         mIsHomeDetail = getArguments().getBoolean(Constants.INTENT_KEY_CALL_FROM_HOME);
-        if (mIsHomeDetail) initToolbar();
         initView(view);
         handleEvent();
         new LoadNewsDetailAsyncTask(getArguments().getLong(Constants.INTENT_KEY_NEWS_ITEM_ID))
@@ -193,7 +193,7 @@ public class DetailFragment extends BaseFragment {
                 document.open();
                 //Add content
                 document.add(new Paragraph(mTitle));
-                if (!mImageLink.isEmpty() && Preferences.with(getActivity()).getAllowImage()) {
+                if (mImageLink != null && Preferences.with(getActivity()).getAllowImage()) {
                     Image image = Image.getInstance(new URL(mImageLink));
                     document.add(image);
                 }
@@ -248,7 +248,8 @@ public class DetailFragment extends BaseFragment {
                 tempNews.setTitle(newsItem.getTitle());
                 tempNews.setAuthor(newsItem.getAuthor());
                 tempNews.setDescription(newsItem.getDescription());
-                tempNews.setImage(newsItem.getEnclosure().getLink());
+                if (newsItem.getEnclosure() != null)
+                    tempNews.setImage(newsItem.getEnclosure().getLink());
                 tempNews.setPubDate(newsItem.getPubDate());
                 if (newsItem.getLink() != null)
                     tempNews.setLinkItem(newsItem.getLink());
@@ -264,7 +265,7 @@ public class DetailFragment extends BaseFragment {
             super.onPostExecute(newsItem);
             if (mIsHomeDetail) updateData(mId);
             mTvTitleDetail.setText(newsItem.getTitle());
-            mTvContentDetail.setText(newsItem.getDescription());
+            mTvContentDetail.setText(Html.fromHtml(newsItem.getDescription()));
             mTvAuthor.setText(newsItem.getAuthor());
             mTvTimeDetail.setText(newsItem.getPubDate());
             mTvLink.setText(newsItem.getLinkItem());

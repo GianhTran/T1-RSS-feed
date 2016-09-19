@@ -39,5 +39,6 @@ public interface ApiInterface {
     Call<WeatherWrapper> loadWeather(@Query("apikey") String apiKey,
                                      @Query("lat") long lat,
                                      @Query("lon") long lon);
+    @GET
     Call<News> getCustomFeed(@Url String url);
 }
