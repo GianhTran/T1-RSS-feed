@@ -13,6 +13,7 @@ import android.widget.RadioGroup;
 import com.example.framgia.t1_rss_feed.Constants;
 import com.example.framgia.t1_rss_feed.Preferences;
 import com.example.framgia.t1_rss_feed.R;
+import com.example.framgia.t1_rss_feed.helper.EventListenerInterface;
 import com.example.framgia.t1_rss_feed.ui.activity.MainActivity;
 
 /**
@@ -28,10 +29,12 @@ public class SettingsDialog extends Dialog {
     private CheckBox mCheckBoxSetting;
     private CheckBox mCheckBoxSubTopic;
     private Preferences mPreferences;
+    private EventListenerInterface.OnSubmitSettingsListener mSubmitSettingsListener;
 
     public SettingsDialog(Context context) {
         super(context);
         this.mAppCompatActivity = (AppCompatActivity) context;
+        this.mSubmitSettingsListener = (EventListenerInterface.OnSubmitSettingsListener) context;
         setContentView(R.layout.dialog_settings);
         getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         initView();
@@ -92,9 +95,7 @@ public class SettingsDialog extends Dialog {
                         break;
                 }
                 dismiss();
-                mAppCompatActivity.startActivity(new Intent(mAppCompatActivity, MainActivity.class)
-                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    .setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION));
+                mSubmitSettingsListener.onSubmitSettings();
             }
         });
         mButtonCancel.setOnClickListener(new View.OnClickListener() {
