@@ -328,6 +328,7 @@ public class DetailFragment extends BaseFragment {
      */
     private void updateData(long id) {
         Realm realm = Realm.getDefaultInstance();
+        final long index = new NewsItem().getNextHistoryIndex(realm);
         final NewsItem newsItem =
             realm.where(NewsItem.class).equalTo(Constants.KEY_ID, id)
                 .findFirst();
@@ -335,7 +336,7 @@ public class DetailFragment extends BaseFragment {
             @Override
             public void execute(Realm realm) {
                 if (newsItem.getHistoryIndex() == Constants.DEF_HISTOTY_INDEX_VALUE)
-                    newsItem.setHistoryIndex(newsItem.getNextHistoryIndex(realm));
+                    newsItem.setHistoryIndex(index);
                 newsItem.setReadTime(System.currentTimeMillis());
                 newsItem.setViewed(true);
             }

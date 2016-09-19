@@ -1,6 +1,6 @@
 package com.example.framgia.t1_rss_feed.ui.fragment;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,17 +41,12 @@ public class HistoryFragment extends BaseFragment
     private Boolean mIsLoadMore = true;
     private Realm mRealm;
     private EventListenerInterface.OnEditModeListener mEditModeListener;
+    private long mIndex = 0;
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception
-        try {
-            mEditModeListener = (EventListenerInterface.OnEditModeListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString());
-        }
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mEditModeListener = (EventListenerInterface.OnEditModeListener) context;
     }
 
     @Nullable
@@ -194,9 +189,21 @@ public class HistoryFragment extends BaseFragment
                 }
             }
         });
-        mAdapter.updateData(mRealm.where(NewsItem.class)
+        RealmResults<NewsItem> newsItems = mRealm.where(NewsItem.class)
             .equalTo(Constants.KEY_VIEWED, true)
-            .findAllSorted(Constants.KEY_HISTORY_INDEX, Sort.ASCENDING));
+            .findAllSorted(Constants.KEY_HISTORY_INDEX, Sort.ASCENDING);
+        // reset index for load more
+        for (final NewsItem newsItem : newsItems) {
+            mRealm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    newsItem.setIndex(mIndex++);
+                    mRealm.copyToRealmOrUpdate(newsItem);
+                }
+            });
+        }
+        mAdapter.updateData(newsItems);
+        mIndex = 0;
         enableEditMode(false);
     }
 
