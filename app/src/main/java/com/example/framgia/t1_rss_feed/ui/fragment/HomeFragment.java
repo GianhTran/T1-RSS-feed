@@ -1,5 +1,6 @@
 package com.example.framgia.t1_rss_feed.ui.fragment;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,15 +9,11 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.framgia.t1_rss_feed.BaseFragment;
@@ -25,12 +22,12 @@ import com.example.framgia.t1_rss_feed.Preferences;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.News;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
+import com.example.framgia.t1_rss_feed.data.models.RssSource;
 import com.example.framgia.t1_rss_feed.helper.EndlessRecyclerViewScrollListener;
 import com.example.framgia.t1_rss_feed.helper.EventListenerInterface;
 import com.example.framgia.t1_rss_feed.network.ApiInterface;
 import com.example.framgia.t1_rss_feed.network.ServiceGenerator;
 import com.example.framgia.t1_rss_feed.ui.adapter.HomeAdapter;
-import com.example.framgia.t1_rss_feed.util.CommonUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,14 +49,14 @@ public class HomeFragment extends BaseFragment
     private SwipeRefreshLayout mSwipeRefreshHome;
     private RecyclerView mRecyclerViewHome;
     private HomeAdapter mHomeAdapter;
-    private Toolbar mToolbarHome;
-    private Spinner mSpinnerChannel;
-    private int mChannelId = Constants.ASIAN_CHANNEL;
     private TextView mTvDataEmpty;
     private Realm mRealm;
     private FloatingActionButton mFloatingActionHome;
     private Boolean mIsLoadMore = true;
     private CoordinatorLayout mCoordinatorLayout;
+    private int mRssId;
+    private RssSource mRssSource;
+    private EventListenerInterface.OnSetTitleListener mSetTitleListener;
 
     public static HomeFragment newInstance(int rssId) {
         HomeFragment homeFragment = new HomeFragment();
@@ -74,13 +71,22 @@ public class HomeFragment extends BaseFragment
         super.setRetainInstance(retain);
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mSetTitleListener = (EventListenerInterface.OnSetTitleListener) context;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mRealm = Realm.getDefaultInstance();
+        mRssId = getArguments().getInt(Constants.KEY_RSS_ID);
         initView(view);
+        initSource();
+        initToolbar();
         handleEvent();
         initRecyclerView();
         initSwipeToRefresh();
@@ -93,29 +99,19 @@ public class HomeFragment extends BaseFragment
         loadData();
     }
 
+    private void initSource() {
+        mRssSource = mRealm.where(RssSource.class).equalTo(Constants.KEY_ID, mRssId).findFirst();
+    }
+
     private void initView(View view) {
         mSwipeRefreshHome = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_home);
         mRecyclerViewHome = (RecyclerView) view.findViewById(R.id.recycler_home);
-        mSpinnerChannel = (Spinner) view.findViewById(R.id.spinner_channel);
         mTvDataEmpty = (TextView) view.findViewById(R.id.text_no_data);
         mFloatingActionHome = (FloatingActionButton) view.findViewById(R.id.fab_home);
-        mSpinnerChannel.setSelection(Preferences.with(getActivity()).getChannel());
         mCoordinatorLayout = (CoordinatorLayout) view.findViewById(R.id.coordinator_home);
     }
 
     private void handleEvent() {
-        mSpinnerChannel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int id, long l) {
-                mChannelId = id;
-                Preferences.with(getActivity()).setChannel(mChannelId);
-                reloadData();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
         mFloatingActionHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -125,6 +121,10 @@ public class HomeFragment extends BaseFragment
     }
 
     private void initSwipeToRefresh() {
+        mSwipeRefreshHome.setColorSchemeResources(
+            R.color.colorAccent,
+            R.color.colorPrimary,
+            R.color.backgroundColor);
         mSwipeRefreshHome.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -173,51 +173,20 @@ public class HomeFragment extends BaseFragment
         clearList();
         showEmpty(false);
         showLoading(true);
-        ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class);
-        Call<News> call;
-        switch (mChannelId) {
-            case Constants.ASIAN_CHANNEL:
-                call = apiInterface.loadNewsOfAsian();
-                break;
-            case Constants.AFRICA_CHANNEL:
-                call = apiInterface.loadNewsOfAfrica();
-                break;
-            case Constants.ONE_MINUTE_FEATURE_CHANNEL:
-                call = apiInterface.loadNewsOfOneMinuteFeatures();
-                break;
-            case Constants.ART_CHANNEL:
-                call = apiInterface.loadNewsOfArt();
-                break;
-            case Constants.EUROPE_CHANNEL:
-                call = apiInterface.loadNewsOfEurope();
-                break;
-            case Constants.USA_CHANNEL:
-                call = apiInterface.loadNewsOfUsa();
-                break;
-            case Constants.MIDDLE_EAST_CHANNEL:
-                call = apiInterface.loadNewsOfMiddleEast();
-                break;
-            case Constants.HEATH_CHANNEL:
-                call = apiInterface.loadNewsOfHealth();
-                break;
-            case Constants.USA_VOTE_CHANNEL:
-                call = apiInterface.loadNewsOf2016UsaVotes();
-                break;
-            case Constants.EXTREME_CHANNEL:
-                call = apiInterface.loadNewsOfExtremismWatch();
-                break;
-            case Constants.PHOTO_CHANNEL:
-                call = apiInterface.loadNewsOfDayInPhotos();
-                break;
-            default:
-                call = apiInterface.loadNewsOfAsian();
-                break;
-        }
-        call.enqueue(new Callback<News>() {
+        getCallBack().enqueue(new Callback<News>() {
             @Override
             public void onResponse(Call<News> call, Response<News> response) {
+                if (response.body() == null) {
+                    Snackbar.make(mCoordinatorLayout,
+                        R.string.msg_error,
+                        Snackbar.LENGTH_SHORT).show();
+                    showLoading(false);
+                    return;
+                }
+                String channel = response.body().getChannel().getTitle();
                 List<NewsItem> items = response.body().getChannel().getItems();
-                checkData(items, response.body().getChannel().getTitle());
+                checkData(items, channel);
+                setChannel(channel);
             }
 
             @Override
@@ -236,11 +205,11 @@ public class HomeFragment extends BaseFragment
         addFragment(R.id.frame_container, DetailFragment.newInstance(itemId, true));
     }
 
+    /**
+     * method using change tittle of toolbar
+     */
     private void initToolbar() {
-        mToolbarHome = (Toolbar) getActivity().findViewById(R.id.toolbar_home);
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.setSupportActionBar(mToolbarHome);
-        CommonUtil.setToolbarStyle(activity, false, false);
+        mSetTitleListener.onSetTittle(mRssSource.getRssName());
     }
 
     /**
@@ -292,8 +261,7 @@ public class HomeFragment extends BaseFragment
     }
 
     private String getChannelName() {
-        return (getActivity().getResources().getTextArray(R.array
-            .channel_arrays))[mChannelId].toString();
+        return mRssSource.getRssChannel();
     }
 
     /**
@@ -357,5 +325,25 @@ public class HomeFragment extends BaseFragment
     private void clearList() {
         if (mHomeAdapter != null)
             mHomeAdapter.updateData(new RealmList<NewsItem>());
+    }
+
+    private Call<News> getCallBack() {
+        return ServiceGenerator
+            .createService(ApiInterface.class)
+            .getCustomFeed(mRssSource.getRssLink());
+    }
+
+    /**
+     * set channel for rss which registered
+     *
+     * @param channel chanel of rss
+     */
+    private void setChannel(final String channel) {
+        mRealm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                mRssSource.setRssChannel(channel);
+            }
+        });
     }
 }

@@ -24,6 +24,7 @@
     <string name="msg_read_more">click to readmore</string>
     <string name="msg_update_error">oops ! can not update latest news, plz check your
         connect!</string>
+    <string name="msg_error">can not load data from this source !!</string>
     <string name="msg_update_weather">oops can not update weather</string>
     <string name="msg_has_news">we have news for you! </string>
     <string name="msg_export_pdf_error">opps! export PDF fail</string>
