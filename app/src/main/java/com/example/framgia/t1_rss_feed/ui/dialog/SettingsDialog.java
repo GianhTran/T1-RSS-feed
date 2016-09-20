@@ -2,7 +2,6 @@ package com.example.framgia.t1_rss_feed.ui.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -14,7 +13,6 @@ import com.example.framgia.t1_rss_feed.Constants;
 import com.example.framgia.t1_rss_feed.Preferences;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.helper.EventListenerInterface;
-import com.example.framgia.t1_rss_feed.ui.activity.MainActivity;
 
 /**
  * Copyright @ 2016 Framgia inc

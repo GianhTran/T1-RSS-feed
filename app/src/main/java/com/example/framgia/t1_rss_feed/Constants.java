@@ -33,6 +33,7 @@ public class Constants {
     public static final String HTTPS = "https://";
     public static final String EMPTY_STRING = "";
     public static final int DEFAULT_RSS_ID = -1;
+    public static final String UNIT_METRIC = "metric";
     // channel ID
     public static final int ASIAN_CHANNEL = 0;
     public static final int USA_CHANNEL = 1;
@@ -90,10 +91,10 @@ public class Constants {
     public static final int WEATHER_THUNDER = 2;
     public static final int WEATHER_DRIZZLE = 3;
     public static final int WEATHER_FOGGY = 7;
-    public static final int WEATHER_CLOUDY = 4;
+    public static final int WEATHER_CLOUDY = 8;
     public static final int WEATHER_SNOWY = 6;
     public static final int WEATHER_RAINY = 5;
-    public static final int WEATHER_SUNNY = 8;
+    public static final int WEATHER_SUNNY = 800;
     // google location
     public static final Byte REQUEST_CHECK_SETTINGS = 0x1;
     public static final Long UPDATE_INTERVAL_IN_MILLISECONDS = 10000L;

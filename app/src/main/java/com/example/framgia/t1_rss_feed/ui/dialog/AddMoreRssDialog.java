@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.framgia.t1_rss_feed.Constants;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.helper.EventListenerInterface;
 
@@ -62,6 +63,8 @@ public class AddMoreRssDialog extends Dialog {
                     mEdtRssLink.setError(getContext().getString(R.string.msg_link_incorrect));
                     return;
                 }
+                if (!link.startsWith(Constants.HTTP) && !link.startsWith(Constants.HTTPS))
+                    link = Constants.HTTP + link;
                 mSubmitAddRssListener.onSubmitAddRss(name, link);
                 dismiss();
             }
