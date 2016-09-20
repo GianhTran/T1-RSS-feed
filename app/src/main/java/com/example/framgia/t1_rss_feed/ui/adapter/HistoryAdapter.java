@@ -69,6 +69,7 @@ public class HistoryAdapter extends
                     mOnItemNewsClickListener.onItemNewsClick(item.getId(), position);
                 }
             });
+            mCheckBoxDelete.setChecked(item.getChecked());
             mCheckBoxDelete.setVisibility((mIsEdit) ? View.VISIBLE : View.GONE);
             if (!mIsEdit) mCheckBoxDelete.setChecked(false);
             mCheckBoxDelete.setOnClickListener(new View.OnClickListener() {

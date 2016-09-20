@@ -350,6 +350,7 @@ public class DetailFragment extends BaseFragment {
                     newsItem.setHistoryIndex(index);
                 newsItem.setReadTime(System.currentTimeMillis());
                 newsItem.setViewed(true);
+                newsItem.setChecked(false);
             }
         });
         realm.close();
