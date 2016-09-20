@@ -209,7 +209,8 @@ public class HomeFragment extends BaseFragment
      * method using change tittle of toolbar
      */
     private void initToolbar() {
-        mSetTitleListener.onSetTittle(mRssSource.getRssName());
+        if (mSetTitleListener != null)
+            mSetTitleListener.onSetTittle(mRssSource.getRssName());
     }
 
     /**

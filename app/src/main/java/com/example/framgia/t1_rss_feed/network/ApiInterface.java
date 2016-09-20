@@ -37,8 +37,8 @@ public interface ApiInterface {
     Call<News> loadNewsOfDayInPhotos();
     @GET("weather")
     Call<WeatherWrapper> loadWeather(@Query("apikey") String apiKey,
-                                     @Query("lat") long lat,
-                                     @Query("lon") long lon);
+                                     @Query("lat") double lat,
+                                     @Query("lon") double lon);
     @GET
     Call<News> getCustomFeed(@Url String url);
 }

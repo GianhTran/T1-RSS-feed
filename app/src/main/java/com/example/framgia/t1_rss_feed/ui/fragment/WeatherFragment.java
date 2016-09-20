@@ -1,5 +1,6 @@
 package com.example.framgia.t1_rss_feed.ui.fragment;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -9,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.framgia.t1_rss_feed.BaseFragment;
+import com.example.framgia.t1_rss_feed.BaseLocationServiceFragment;
 import com.example.framgia.t1_rss_feed.Constants;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.WeatherWrapper;
@@ -28,11 +29,8 @@ import retrofit2.Response;
  * Copyright @ 2016 Framgia inc
  * Created by GianhTNS on 16/09/2016.
  */
-public class WeatherFragment extends BaseFragment
+public class WeatherFragment extends BaseLocationServiceFragment
     implements EventListenerInterface.OnUserChangeListener {
-    // todo using google location to load lat long, because have no devices here so update it later
-    private long mLat = 0;
-    private long mLong = 0;
     private TextView mTvDescription;
     private TextView mTvMaxTemp;
     private TextView mTvMinTemp;
@@ -46,7 +44,6 @@ public class WeatherFragment extends BaseFragment
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_weather, container, false);
         initView(view);
-        loadWeather();
         return view;
     }
 
@@ -65,11 +62,11 @@ public class WeatherFragment extends BaseFragment
     }
 
     // // TODO: 16/09/2016 using Observable to handle weather listener
-    private void loadWeather() {
+    private void loadWeather(double lat, double lon) {
         ApiInterface apiInterface = ServiceGenerator.createGsonService(ApiInterface.class);
         Call<WeatherWrapper> call = apiInterface.loadWeather(Constants.WEATHER_API_KEY,
-            mLat,
-            mLong);
+            lat,
+            lon);
         call.enqueue(new Callback<WeatherWrapper>() {
             @Override
             public void onResponse(Call<WeatherWrapper> call, Response<WeatherWrapper> response) {
@@ -145,5 +142,18 @@ public class WeatherFragment extends BaseFragment
     @Override
     public void onUserChange(long userNumber) {
         mTvUserOnline.setText(String.valueOf(userNumber));
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        super.onLocationChanged(location);
+        updateLocationWeather();
+    }
+
+    private void updateLocationWeather() {
+        if (mCurrentLocation != null) {
+            loadWeather(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+            stopLocationUpdates();
+        }
     }
 }
