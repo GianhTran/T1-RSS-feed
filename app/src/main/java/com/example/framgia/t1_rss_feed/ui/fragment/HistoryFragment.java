@@ -1,6 +1,6 @@
 package com.example.framgia.t1_rss_feed.ui.fragment;
 
-import android.content.Context;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +19,7 @@ import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
 import com.example.framgia.t1_rss_feed.helper.EndlessRecyclerViewScrollListener;
 import com.example.framgia.t1_rss_feed.helper.EventListenerInterface;
+import com.example.framgia.t1_rss_feed.ui.activity.HistoryActivity;
 import com.example.framgia.t1_rss_feed.ui.adapter.HistoryAdapter;
 import com.example.framgia.t1_rss_feed.ui.view.DividerItemDecoration;
 
@@ -44,9 +45,10 @@ public class HistoryFragment extends BaseFragment
     private long mIndex = 0;
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mEditModeListener = (EventListenerInterface.OnEditModeListener) context;
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof HistoryActivity)
+            mEditModeListener = (EventListenerInterface.OnEditModeListener) activity;
     }
 
     @Nullable

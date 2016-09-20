@@ -73,13 +73,13 @@ public class HistoryActivity extends BaseActivity
         mButtonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCancelListener.onCancel();
+                if (mCancelListener != null) mCancelListener.onCancel();
             }
         });
         mButtonClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mClearListener.onClear();
+                if (mClearListener != null) mClearListener.onClear();
             }
         });
     }

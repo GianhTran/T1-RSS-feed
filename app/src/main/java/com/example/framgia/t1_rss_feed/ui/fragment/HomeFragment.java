@@ -1,6 +1,6 @@
 package com.example.framgia.t1_rss_feed.ui.fragment;
 
-import android.content.Context;
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +27,7 @@ import com.example.framgia.t1_rss_feed.helper.EndlessRecyclerViewScrollListener;
 import com.example.framgia.t1_rss_feed.helper.EventListenerInterface;
 import com.example.framgia.t1_rss_feed.network.ApiInterface;
 import com.example.framgia.t1_rss_feed.network.ServiceGenerator;
+import com.example.framgia.t1_rss_feed.ui.activity.MainActivity;
 import com.example.framgia.t1_rss_feed.ui.adapter.HomeAdapter;
 
 import java.util.ArrayList;
@@ -72,9 +73,10 @@ public class HomeFragment extends BaseFragment
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mSetTitleListener = (EventListenerInterface.OnSetTitleListener) context;
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof MainActivity)
+            mSetTitleListener = (EventListenerInterface.OnSetTitleListener) activity;
     }
 
     @Nullable
