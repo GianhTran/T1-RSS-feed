@@ -34,22 +34,21 @@ import retrofit2.Response;
 public class SyncDataService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class);
-        Call<News> call;
-        // todo update for all of channel
-        call = apiInterface.loadNewsOfAsian();
-        call.enqueue(new Callback<News>() {
-            @Override
-            public void onResponse(Call<News> call, Response<News> response) {
-                List<NewsItem> items = response.body().getChannel().getItems();
-                checkData(items, response.body().getChannel().getTitle());
-            }
+        //todo update all rss
+        ServiceGenerator.createService(ApiInterface.class)
+            .getCustomFeed(Constants.TINHTE_CHANNEL_LINK)
+            .enqueue(new Callback<News>() {
+                @Override
+                public void onResponse(Call<News> call, Response<News> response) {
+                    List<NewsItem> items = response.body().getChannel().getItems();
+                    checkData(items, response.body().getChannel().getTitle());
+                }
 
-            @Override
-            public void onFailure(Call<News> call, Throwable t) {
-                stopSelf();
-            }
-        });
+                @Override
+                public void onFailure(Call<News> call, Throwable t) {
+                    stopSelf();
+                }
+            });
         return START_NOT_STICKY;
     }
 
@@ -108,9 +107,10 @@ public class SyncDataService extends Service {
                             continue;
                         itemNew.setId(itemNew.getNextPrimaryKey(realm));
                         itemNew.setChannel(mChannel);
-                        itemNew.setViewed(false);
                         itemNew.setIndex(itemNew.getNextIndex(realm, mChannel));
+                        itemNew.setViewed(false);
                         itemNew.setReadTime(Constants.LONG_ZERO_VALUE);
+                        itemNew.setHistoryIndex(Constants.DEF_HISTOTY_INDEX_VALUE);
                         realm.copyToRealm(itemNew);
                         mHasNew = true;
                     }

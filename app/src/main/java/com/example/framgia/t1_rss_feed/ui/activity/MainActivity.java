@@ -187,8 +187,7 @@ public class MainActivity extends BaseActivity
         mUserRef.removeValue();
         Intent mainIntent = IntentCompat.makeRestartActivityTask(this.getPackageManager()
             .getLaunchIntentForPackage(this.getPackageName())
-            .getComponent())
-            .setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            .getComponent());
         this.startActivity(mainIntent);
     }
 
