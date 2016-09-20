@@ -14,7 +14,9 @@
     <string name="weather_snowy">&#xf01b;</string>
     <string name="weather_thunder">&#xf01e;</string>
     <string name="weather_drizzle">&#xf01c;</string>
-
+    <string name="ic_eye">&#xf15c;</string>
+    <string name="ic_label_heart">&#xf186;</string>
+    <string name="ic_user">&#xf20e;</string>
     <!-- project string -->
     <string name="title_prompt">Choose a channel</string>
     <string name="msg_data_empty">data empty</string>

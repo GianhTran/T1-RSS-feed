@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backgroundColor"
+    android:background="@android:color/white"
     android:scrollbars="none">
 
     <LinearLayout
@@ -12,6 +12,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="@dimen/dimen_tiny">
+
+        <ImageView
+            android:id="@+id/image_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_back"/>
 
         <ProgressBar
             android:id="@+id/progress_bar_detail"
@@ -41,6 +47,28 @@
             android:layout_gravity="start"
             android:textStyle="italic"/>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen_small"
+            android:orientation="horizontal">
+
+            <com.example.framgia.t1_rss_feed.ui.view.FontIcon
+                android:id="@+id/font_print"
+                style="@style/FontIconStyle"
+                android:text="@string/ic_export"
+                android:textSize="@dimen/text_size_large"/>
+
+            <com.example.framgia.t1_rss_feed.ui.view.FontIcon
+                android:id="@+id/font_share"
+                style="@style/FontIconStyle"
+                android:layout_marginLeft="@dimen/dimen_small"
+                android:layout_marginStart="@dimen/dimen_small"
+                android:text="@string/ic_share"
+                android:textSize="@dimen/text_size_large"/>
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/text_content_detail"
             android:layout_width="match_parent"
@@ -61,30 +89,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dimen_small"
             android:gravity="end"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.example.framgia.t1_rss_feed.ui.view.FontIcon
-                android:id="@+id/font_print"
-                style="@style/FontIconStyle"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_marginTop="@dimen/dimen_small"
-                android:text="@string/ic_export"/>
-
-            <com.example.framgia.t1_rss_feed.ui.view.FontIcon
-                android:id="@+id/font_share"
-                style="@style/FontIconStyle"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginTop="@dimen/dimen_small"
-                android:text="@string/ic_share"/>
-
-        </RelativeLayout>
 
     </LinearLayout>
 

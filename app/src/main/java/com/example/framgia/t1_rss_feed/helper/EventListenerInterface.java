@@ -81,4 +81,11 @@ public class EventListenerInterface {
     public interface OnRemoveRssListener {
         void onRemoveRss(int id);
     }
+
+    /**
+     * handle number of user online listener
+     */
+    public interface OnUserChangeListener {
+        void onUserChange(long userNumber);
+    }
 }

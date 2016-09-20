@@ -1,20 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout android:id="@+id/linear_weather"
+              xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="@drawable/bg_gradient"
               android:gravity="center_vertical"
               android:orientation="horizontal"
-              android:padding="@dimen/dimen_small">
+              android:paddingBottom="@dimen/dimen_medium"
+              android:paddingTop="@dimen/dimen_small">
 
-    <TextView
-        android:id="@+id/text_day"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="2"
-        android:text="@string/text_today"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"/>
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <com.example.framgia.t1_rss_feed.ui.view.FontIcon
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ic_user"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:id="@+id/text_user_online"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dimen_small"
+            android:layout_marginStart="@dimen/dimen_small"
+            android:textColor="@android:color/white"/>
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="0dp"
