@@ -65,6 +65,7 @@ public class WeatherFragment extends BaseLocationServiceFragment
     private void loadWeather(double lat, double lon) {
         ApiInterface apiInterface = ServiceGenerator.createGsonService(ApiInterface.class);
         Call<WeatherWrapper> call = apiInterface.loadWeather(Constants.WEATHER_API_KEY,
+            Constants.UNIT_METRIC,
             lat,
             lon);
         call.enqueue(new Callback<WeatherWrapper>() {
@@ -86,9 +87,9 @@ public class WeatherFragment extends BaseLocationServiceFragment
     private void injectData(WeatherWrapper weatherWrapper) {
         // TODO: 16/09/2016 inject full data
         mTvDescription.setText(weatherWrapper.getWeathers().get(0).getDescription());
-        mTvMaxTemp.setText(String.format(mTvMaxTemp.getText().toString()
+        mTvMaxTemp.setText(String.format(getString(R.string.text_temp)
             , weatherWrapper.getWeatherValue().getTempMax()));
-        mTvMinTemp.setText(String.format(mTvMinTemp.getText().toString(),
+        mTvMinTemp.setText(String.format(getString(R.string.text_temp),
             weatherWrapper.getWeatherValue().getTempMin()));
         setWeatherIcon(weatherWrapper.getWeathers().get(0).getId(),
             weatherWrapper.getWeatherSys().getSunrise(),
@@ -105,7 +106,7 @@ public class WeatherFragment extends BaseLocationServiceFragment
     private void setWeatherIcon(int actualId, long sunrise, long sunset) {
         int id = actualId / 100;
         String icon;
-        if (id == Constants.WEATHER_SUNNY) {
+        if (actualId == Constants.WEATHER_SUNNY) {
             long currentTime = new Date().getTime();
             if (currentTime >= sunrise && currentTime < sunset) {
                 icon = getActivity().getString(R.string.weather_sunny);

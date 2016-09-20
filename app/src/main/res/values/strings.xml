@@ -62,7 +62,7 @@
     <string name="text_rss_name">Rss name</string>
     <string name="text_add_more_channel">add more channel</string>
     <string name="text_today">Today</string>
-    <string name="text_temp">%s °F</string>
+    <string name="text_temp">%s °C</string>
     <!-- spinner data -->
     <string-array name="channel_arrays">
         <item>Asia - Voice of America</item>

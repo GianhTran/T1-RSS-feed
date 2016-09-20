@@ -37,6 +37,7 @@ public interface ApiInterface {
     Call<News> loadNewsOfDayInPhotos();
     @GET("weather")
     Call<WeatherWrapper> loadWeather(@Query("apikey") String apiKey,
+                                     @Query("units") String units,
                                      @Query("lat") double lat,
                                      @Query("lon") double lon);
     @GET
