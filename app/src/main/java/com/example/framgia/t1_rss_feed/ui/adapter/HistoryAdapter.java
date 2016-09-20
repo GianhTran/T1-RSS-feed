@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -60,13 +61,14 @@ public class HistoryAdapter extends
         }
 
         public void injectData(final NewsItem item, final int position) {
-            mTvContent.setText(item.getDescription());
+            mTvContent.setText(Html.fromHtml(item.getDescription()));
             mTvTime.setText(item.getPubDate());
             mTvTitle.setText(item.getTitle());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mOnItemNewsClickListener.onItemNewsClick(item.getId(), position);
+                    if (!mIsEdit)
+                        mOnItemNewsClickListener.onItemNewsClick(item.getId(), position);
                 }
             });
             mCheckBoxDelete.setChecked(item.getChecked());
