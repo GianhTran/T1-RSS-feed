@@ -11,7 +11,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -56,6 +55,7 @@ public class MainActivity extends BaseActivity
     private Realm mRealm;
     private MenuAdapter mMenuAdapter;
     private Firebase mUserRef;
+    private EventListenerInterface.OnUserChangeListener mUserChangeListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +76,13 @@ public class MainActivity extends BaseActivity
     protected void onDestroy() {
         super.onDestroy();
         mRealm.close();
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if (fragment instanceof WeatherFragment)
+            mUserChangeListener = (EventListenerInterface.OnUserChangeListener) fragment;
     }
 
     private void initNavigationDrawer() {
@@ -248,7 +255,8 @@ public class MainActivity extends BaseActivity
         ValueEventListener myList = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                //todo set user count = String.valueOf(snapshot.getChildrenCount()));
+                if (mUserChangeListener != null)
+                    mUserChangeListener.onUserChange(snapshot.getChildrenCount());
             }
 
             @Override

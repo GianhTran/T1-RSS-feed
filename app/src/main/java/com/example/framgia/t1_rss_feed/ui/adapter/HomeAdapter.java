@@ -1,7 +1,6 @@
 package com.example.framgia.t1_rss_feed.ui.adapter;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -13,6 +12,7 @@ import com.example.framgia.t1_rss_feed.Constants;
 import com.example.framgia.t1_rss_feed.R;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
 import com.example.framgia.t1_rss_feed.helper.EventListenerInterface;
+import com.example.framgia.t1_rss_feed.ui.view.FontIcon;
 import com.example.framgia.t1_rss_feed.util.DateTimeUtil;
 
 import java.util.Date;
@@ -93,33 +93,32 @@ public class HomeAdapter extends RealmRecyclerViewAdapter<NewsItem, RecyclerView
         private TextView mTvTitle;
         private TextView mTvTime;
         private TextView mTvContent;
-        private TextView mNew;
+        private FontIcon mTvNew;
+        private FontIcon mTvView;
 
         public ItemHolder(View view) {
             super(view);
             mTvContent = (TextView) view.findViewById(R.id.text_content);
             mTvTime = (TextView) view.findViewById(R.id.text_time);
             mTvTitle = (TextView) view.findViewById(R.id.text_title);
-            mNew = (TextView) view.findViewById(R.id.text_new);
+            mTvNew = (FontIcon) view.findViewById(R.id.text_new);
+            mTvView = (FontIcon) view.findViewById(R.id.text_view);
         }
 
         public void injectData(final NewsItem item, final int position) {
             Boolean isNEW = (DateTimeUtil.compareDate(item.getPubDate(),
                 DateTimeUtil.formatDateToString(new Date()),
                 DateTimeUtil.SECOND_FORMAT) == Constants.SAME_DAY);
-            mNew.setVisibility((isNEW && !item.getViewed()) ? View.VISIBLE : View.GONE);
+            mTvNew.setVisibility(isNEW ? View.VISIBLE : View.GONE);
             mTvContent.setText(Html.fromHtml(item.getDescription()));
             mTvTime.setText(item.getPubDate());
             mTvTitle.setText(item.getTitle());
-            itemView.setBackgroundColor(ContextCompat.getColor(context,
-                (item.getViewed()) ? R.color.backgroundColor : R.color.backgroundColorSecond));
+            mTvView.setVisibility(item.getViewed() ? View.VISIBLE : View.GONE);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     mOnItemNewClickListener.onItemNewsClick(item.getId(), position);
-                    itemView.setBackgroundColor(ContextCompat.getColor(context,
-                        R.color.backgroundColor));
-                    mNew.setVisibility(View.GONE);
+                    mTvView.setVisibility(View.VISIBLE);
                 }
             });
         }

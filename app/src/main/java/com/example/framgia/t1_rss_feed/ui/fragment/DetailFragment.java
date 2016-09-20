@@ -72,6 +72,7 @@ public class DetailFragment extends BaseFragment {
     private Boolean mIsHomeDetail;
     private String mImageLink;
     private LinearLayout mLinearLayout;
+    private ImageView mImageViewBack;
 
     public static DetailFragment newInstance(long itemId, boolean isCallFromHome) {
         DetailFragment detailFragment = new DetailFragment();
@@ -121,6 +122,9 @@ public class DetailFragment extends BaseFragment {
         mFontIconShare = (FontIcon) view.findViewById(R.id.font_share);
         mProgressBarDetail = (ProgressBar) view.findViewById(R.id.progress_bar_detail);
         mLinearLayout = (LinearLayout) view.findViewById(R.id.linear_detail);
+        mImageViewBack = (ImageView) view.findViewById(R.id.image_back);
+        // just using this view in home detail
+        mImageViewBack.setVisibility(mIsHomeDetail ? View.VISIBLE : View.GONE);
     }
 
     private void handleEvent() {
@@ -144,6 +148,12 @@ public class DetailFragment extends BaseFragment {
                 new CreatePdfAsyncTask(mTvTitleDetail.getText().toString(),
                     mTvContentDetail.getText().toString(),
                     mTvAuthor.getText().toString()).execute();
+            }
+        });
+        mImageViewBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeFragment(mDetailFragment);
             }
         });
     }
