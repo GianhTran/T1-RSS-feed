@@ -67,6 +67,14 @@
                 android:text="@string/ic_share"
                 android:textSize="@dimen/text_size_large"/>
 
+            <com.example.framgia.t1_rss_feed.ui.view.FontIcon
+                android:id="@+id/font_share_link"
+                style="@style/FontIconStyle"
+                android:layout_marginLeft="@dimen/dimen_small"
+                android:layout_marginStart="@dimen/dimen_small"
+                android:text="@string/ic_share_link"
+                android:textSize="@dimen/text_size_large"/>
+
         </LinearLayout>
 
         <TextView

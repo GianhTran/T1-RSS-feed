@@ -17,6 +17,7 @@
     <string name="ic_eye">&#xf15c;</string>
     <string name="ic_label_heart">&#xf186;</string>
     <string name="ic_user">&#xf20e;</string>
+    <string name="ic_share_link">&#xf18e;</string>
     <!-- project string -->
     <string name="title_prompt">Choose a channel</string>
     <string name="msg_data_empty">data empty</string>
@@ -28,13 +29,15 @@
         connect!</string>
     <string name="msg_error">can not load data from this source !!</string>
     <string name="msg_update_weather">oops can not update weather</string>
-    <string name="msg_has_news">we have news for you! </string>
+    <string name="msg_has_news">someone share news for you! </string>
     <string name="msg_export_pdf_error">opps! export PDF fail</string>
     <string name="msg_export_pdf_success">export PDF file success!</string>
     <string name="title_share">share title</string>
     <string name="title_setting">Settings</string>
     <string name="msg_install_app">plz install apps you want share with</string>
     <string name="msg_file_not_exists">"The file not exists! "</string>
+    <string name="msg_share_link_success">"share link to other success!"</string>
+    <string name="msg_share_link_fail">"share link to other fail!"</string>
     <string name="msg_install_pdf_reader_app">plz install pdf reader app</string>
     <string name="title_intent_open_file_pdf">Open File</string>
     <string name="text_new">new</string>

@@ -15,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -29,10 +30,14 @@ import com.example.framgia.t1_rss_feed.BaseFragment;
 import com.example.framgia.t1_rss_feed.Constants;
 import com.example.framgia.t1_rss_feed.Preferences;
 import com.example.framgia.t1_rss_feed.R;
+import com.example.framgia.t1_rss_feed.data.models.FCMResponce;
 import com.example.framgia.t1_rss_feed.data.models.NewsItem;
 import com.example.framgia.t1_rss_feed.data.models.TempNews;
+import com.example.framgia.t1_rss_feed.network.ApiInterface;
+import com.example.framgia.t1_rss_feed.network.ServiceGenerator;
 import com.example.framgia.t1_rss_feed.ui.view.FontIcon;
 import com.example.framgia.t1_rss_feed.util.CommonUtil;
+import com.google.gson.JsonObject;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
@@ -51,6 +56,9 @@ import java.util.Date;
 import java.util.List;
 
 import io.realm.Realm;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Copyright @ 2016 Framgia inc
@@ -66,6 +74,7 @@ public class DetailFragment extends BaseFragment {
     private TextView mTvAuthor;
     private FontIcon mFontIconPrint;
     private FontIcon mFontIconShare;
+    private FontIcon mFontIconShareLink;
     private String mShareLink = null;
     private DetailFragment mDetailFragment;
     private ProgressBar mProgressBarDetail;
@@ -125,6 +134,7 @@ public class DetailFragment extends BaseFragment {
         mImageViewBack = (ImageView) view.findViewById(R.id.image_back);
         // just using this view in home detail
         mImageViewBack.setVisibility(mIsHomeDetail ? View.VISIBLE : View.GONE);
+        mFontIconShareLink = (FontIcon) view.findViewById(R.id.font_share_link);
     }
 
     private void handleEvent() {
@@ -154,6 +164,13 @@ public class DetailFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 removeFragment(mDetailFragment);
+            }
+        });
+        mFontIconShareLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!TextUtils.isEmpty(mTvLink.getText()))
+                    shareLinkToOther(mTvLink.getText().toString());
             }
         });
     }
@@ -382,5 +399,34 @@ public class DetailFragment extends BaseFragment {
                 R.string.msg_install_pdf_reader_app,
                 Snackbar.LENGTH_SHORT).show();
         }
+    }
+
+    private void shareLinkToOther(String link) {
+        ServiceGenerator
+            .createFCMService(ApiInterface.class)
+            .post(getJson(link)).enqueue(new Callback<FCMResponce>() {
+            @Override
+            public void onResponse(Call<FCMResponce> call, Response<FCMResponce> response) {
+                Snackbar.make(mLinearLayout,
+                    R.string.msg_share_link_success,
+                    Snackbar.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<FCMResponce> call, Throwable t) {
+                Snackbar.make(mLinearLayout,
+                    R.string.msg_share_link_fail,
+                    Snackbar.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public static JsonObject getJson(String shareLink) {
+        JsonObject jsonHeader = new JsonObject();
+        jsonHeader.addProperty(Constants.FIRE_BASE_PARAM_TO, Constants.FIRE_BASE_TOPIC_URL);
+        JsonObject jsonItem = new JsonObject();
+        jsonItem.addProperty(Constants.FIRE_BASE_PARAM_MESSAGE, shareLink);
+        jsonHeader.add(Constants.FIRE_BASE_PARAM_DATA, jsonItem);
+        return jsonHeader;
     }
 }

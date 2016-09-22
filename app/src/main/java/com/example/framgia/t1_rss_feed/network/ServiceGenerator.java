@@ -37,4 +37,14 @@ public class ServiceGenerator {
         Retrofit retrofit = jSonBuilder.client(httpClient.build()).build();
         return retrofit.create(serviceClass);
     }
+
+    private static Retrofit.Builder jSonFCMBuilder =
+        new Retrofit.Builder()
+            .baseUrl(Constants.FIRE_BASE_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create());
+
+    public static <S> S createFCMService(Class<S> serviceClass) {
+        Retrofit retrofit = jSonFCMBuilder.client(httpClient.build()).build();
+        return retrofit.create(serviceClass);
+    }
 }

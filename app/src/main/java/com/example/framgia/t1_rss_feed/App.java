@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.example.framgia.t1_rss_feed.data.models.RssSource;
 import com.firebase.client.Firebase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -28,6 +29,7 @@ public class App extends Application {
         mRealm = Realm.getDefaultInstance();
         if (mRealm.where(RssSource.class).findFirst() == null)
             createChannel();
+        FirebaseMessaging.getInstance().subscribeToTopic(Constants.FIRE_BASE_TOPIC);
     }
 
     /**

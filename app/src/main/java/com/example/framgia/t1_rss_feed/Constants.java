@@ -101,4 +101,14 @@ public class Constants {
     public static final Long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
         UPDATE_INTERVAL_IN_MILLISECONDS / 2;
     public static final int REQUEST_CODE_GRANT_PERMISSION = 113;
+    // FCM
+    public static final String SERVER_FCM_KEY = "AIzaSyBChahSrDuNqihSrWBLTUN2-AXAUxCm_jg";
+    public static final String FIRE_BASE_BASE_URL = " https://fcm.googleapis.com/";
+    public static final String FIRE_BASE_TOPIC_URL = "/topics/news";
+    public static final String FIRE_BASE_PARAM_TO = "to";
+    public static final String FIRE_BASE_PARAM_MESSAGE = "message";
+    public static final String FIRE_BASE_PARAM_DATA = "data";
+    public static final String FIRE_BASE_TOPIC = "news";
+    public static final String FIRE_BASE_LINK_PRE = "{message=";
+    public static final String FIRE_BASE_LINK_LAST = "}";
 }

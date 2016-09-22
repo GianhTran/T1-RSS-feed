@@ -29,8 +29,13 @@ public class MessagingService extends FirebaseMessagingService {
      */
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        if (Preferences.with(this).getSubTopic() && remoteMessage.getNotification() != null)
-            sendNotification(remoteMessage.getNotification().getBody());
+        // Check if message contains a data payload.
+        if (Preferences.with(this).getSubTopic() && remoteMessage.getData().size() > 0) {
+            sendNotification(remoteMessage.getData()
+                .toString()
+                .replace(Constants.FIRE_BASE_LINK_PRE, "")
+                .replace(Constants.FIRE_BASE_LINK_LAST, ""));
+        }
     }
 
     /**
